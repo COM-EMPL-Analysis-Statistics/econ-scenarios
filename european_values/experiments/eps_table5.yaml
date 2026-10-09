@@ -1,0 +1,8 @@
+# Antropic's Table 5: the capital-supply elasticity over its range, on the EU baseline.
+# eps is on 'discuss' in calibration_parameters.yaml; this is the range every EU result is
+# reported over. Everything not listed here stays at its baseline value.
+name: eps table 5
+description: capital-supply elasticity at 1, 3 (baseline), 6 and infinity (rental rate pegged)
+base: eu
+sweep:
+  eps: [1, 3, 6, .inf]

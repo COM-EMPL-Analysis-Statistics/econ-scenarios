@@ -1,0 +1,683 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calibration parameters</title>
+<style>
+:root {
+  --bg:#f6f7f9; --panel:#ffffff; --fg:#1c1f24; --muted:#5f6670; --line:#e3e6ea; --line-strong:#c9ced5;
+  --head:#f0f2f5; --zebra:#fafbfc; --accent:#2f5fa8; --accent-soft:#e6eef9;
+  --decided:#2e8b57; --decided-soft:#e4f3ea;
+  --discuss:#d9891f; --discuss-soft:#fdf1dc; --discuss-row:#fff7e8;
+  --draft:#b58b00; --draft-soft:#fbf3cf;
+  --open:#b9433e; --open-soft:#fbe7e5;
+  --group-row:#eff1f4; --group-line:#8d96a3;
+  --shadow:0 1px 2px rgba(16,24,40,.06), 0 1px 3px rgba(16,24,40,.08);
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg:#0f1115; --panel:#171a20; --fg:#e7e9ee; --muted:#9aa3ae; --line:#272c35; --line-strong:#3a414c;
+  --head:#1d2129; --zebra:#1a1e25; --accent:#7ea6e8; --accent-soft:#1f2b40;
+  --decided:#5ec28a; --decided-soft:#173324;
+  --discuss:#e6a24a; --discuss-soft:#3d2d14; --discuss-row:#2b2316;
+  --draft:#d8b24a; --draft-soft:#3a3115;
+  --open:#e0736d; --open-soft:#3b1f1d;
+  --group-row:#20242c; --group-line:#6b7482;
+  --shadow:none;
+} }
+:root[data-theme="dark"] {
+  --bg:#0f1115; --panel:#171a20; --fg:#e7e9ee; --muted:#9aa3ae; --line:#272c35; --line-strong:#3a414c;
+  --head:#1d2129; --zebra:#1a1e25; --accent:#7ea6e8; --accent-soft:#1f2b40;
+  --decided:#5ec28a; --decided-soft:#173324;
+  --discuss:#e6a24a; --discuss-soft:#3d2d14; --discuss-row:#2b2316;
+  --draft:#d8b24a; --draft-soft:#3a3115;
+  --open:#e0736d; --open-soft:#3b1f1d;
+  --group-row:#20242c; --group-line:#6b7482;
+  --shadow:none;
+}
+* { box-sizing:border-box; }
+html { background:var(--bg); }
+body { margin:0; padding:28px 48px 56px; background:var(--bg); color:var(--fg);
+       font:14px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+.page { max-width:1680px; margin:0 auto; }
+header h1 { font-size:22px; font-weight:650; letter-spacing:-.01em; margin:0 0 4px; }
+header p { color:var(--muted); margin:0; max-width:900px; }
+.toolbar { display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin:18px 0 14px; }
+.chips { display:flex; flex-wrap:wrap; gap:6px; }
+.chip { display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border-radius:999px;
+        border:1px solid var(--line-strong); background:var(--panel); cursor:pointer; font-size:13px;
+        user-select:none; }
+.chip .dot { width:9px; height:9px; border-radius:50%; }
+.chip .n { color:var(--muted); font-variant-numeric:tabular-nums; }
+.chip.off { opacity:.45; }
+.chip.legend { cursor:default; }
+.spacer { flex:1; }
+input.filter { padding:6px 10px; border:1px solid var(--line-strong); border-radius:8px;
+               background:var(--panel); color:var(--fg); min-width:220px; font:inherit; }
+button { font:inherit; font-size:13px; padding:6px 10px; border-radius:8px; border:1px solid var(--line-strong);
+         background:var(--panel); color:var(--fg); cursor:pointer; }
+button:hover, .chip:hover { border-color:var(--accent); }
+details.panel { background:var(--panel); border:1px solid var(--line); border-radius:12px;
+                box-shadow:var(--shadow); margin:0 0 14px; overflow:hidden; }
+details.panel > summary { list-style:none; cursor:pointer; display:flex; align-items:center; gap:12px;
+                          padding:12px 16px; user-select:none; }
+details.panel > summary::-webkit-details-marker { display:none; }
+summary .letter { width:30px; height:30px; border-radius:8px; background:var(--accent-soft); color:var(--accent);
+                  display:inline-flex; align-items:center; justify-content:center; font-weight:700; }
+summary .title { font-size:15px; font-weight:600; }
+summary .meta { color:var(--muted); font-size:13px; }
+summary .mini { display:inline-flex; gap:4px; margin-left:4px; }
+summary .mini span { display:inline-block; min-width:18px; padding:1px 6px; border-radius:999px; font-size:11px;
+                     font-weight:600; text-align:center; }
+summary .chev { margin-left:auto; color:var(--muted); transition:transform .15s; }
+details[open] > summary .chev { transform:rotate(90deg); }
+details[open] > summary { border-bottom:1px solid var(--line); }
+.wrap { overflow-x:auto; padding:4px 14px 10px; }
+table { border-collapse:separate; border-spacing:0; width:100%; min-width:1300px; table-layout:fixed; }
+th { position:sticky; top:0; z-index:1; background:var(--head); color:var(--muted); font-weight:600;
+     font-size:12px; text-transform:uppercase; letter-spacing:.03em; text-align:left; padding:9px 10px;
+     border-bottom:1px solid var(--line-strong); }
+td { padding:11px 12px; border-bottom:1px solid var(--line); vertical-align:top; }
+td:first-child, th:first-child { padding-left:14px; }
+td:last-child, th:last-child { padding-right:14px; }
+tbody tr:nth-child(even) td { background:var(--zebra); }
+tbody tr.hide { display:none; }
+td.sym { font-family:"Cambria Math", Cambria, "Times New Roman", Georgia, serif; font-size:16px; }
+td.sym i { font-style:italic; }
+td.sym sub, td.sym sup { font-size:11px; font-style:italic; line-height:0; }
+td.code { font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size:12px;
+          white-space:pre-wrap; }
+td.code .id { font-weight:600; font-size:13px; }
+td.code .loc { color:var(--muted); display:block; margin-top:2px; }
+td.code .derived { color:var(--accent); font-size:11px; margin-left:4px; }
+td.num { font-variant-numeric:tabular-nums; }
+td.num .mse { display:block; font-size:11px; color:var(--muted); font-weight:400; margin-top:2px; }
+td.euval { font-weight:600; }
+td { overflow-wrap:anywhere; }
+td p, td ul, td .en { margin:0; }
+td p + p, td ul + p, td .en + p, td p + ul, td .en + ul, td ul + .en, td p + .en { margin-top:6px; }
+td ul { padding-left:18px; }
+td li { margin:2px 0; }
+td li + li { margin-top:3px; }
+td .en { padding-left:1.9em; text-indent:-1.9em; }
+td .en + .en { margin-top:4px; }
+td.src a { color:var(--accent); word-break:break-all; }
+td.treat { text-transform:capitalize; white-space:nowrap; }
+.pill { display:inline-block; padding:2px 8px; border-radius:999px; font-size:11px; font-weight:600;
+        text-transform:capitalize; white-space:nowrap; }
+.pill.decided { background:var(--decided-soft); color:var(--decided); }
+.pill.discuss { background:var(--discuss-soft); color:var(--discuss); }
+.pill.draft { background:var(--draft-soft); color:var(--draft); }
+.pill.open { background:var(--open-soft); color:var(--open); }
+tbody tr.discuss td { background:var(--discuss-row) !important; }
+tbody tr.discuss td:first-child { box-shadow:inset 4px 0 0 var(--discuss); }
+tbody tr.grouped td { background:var(--group-row) !important; }
+tbody tr.grouped td:first-child { box-shadow:inset 4px 0 0 var(--group-line); }
+tbody tr.grouped.discuss td { background:var(--discuss-row) !important; }
+tbody tr.grouped.discuss td:first-child { box-shadow:inset 4px 0 0 var(--discuss); }
+tbody tr.group-first td { border-top:1px solid var(--group-line); }
+tbody tr.group-last td { border-bottom:1px solid var(--group-line); }
+.grouplabel { display:block; font-family:system-ui, sans-serif; font-size:11px; color:var(--muted); margin-top:5px;
+              white-space:normal; }
+.empty { padding:14px 16px; color:var(--muted); display:none; }
+details.panel.allhidden .empty { display:block; }
+footer { color:var(--muted); font-size:12px; margin-top:18px; }
+@media (max-width:900px) { body { padding:16px 16px 32px; } .wrap { padding:0 4px 6px; } th, td { padding:7px 8px; } }
+</style></head><body><div class="page">
+<header><h1>Calibration parameters: US values and EU treatment</h1>
+<p>Generated from <code>calibration_parameters.yaml</code>. Please edit the YAML and rerun <code>render_table.py</code> to update this table. The estimated model imports parameters directly from that YAML.</p></header>
+<div class="toolbar"><div class="chips">
+<span class="chip" data-status="decided" title="click to hide or show these rows"><span class="dot" style="background:var(--decided)"></span>decided <span class="n">15</span></span>
+<span class="chip" data-status="discuss" title="click to hide or show these rows"><span class="dot" style="background:var(--discuss)"></span>discuss <span class="n">3</span></span>
+<span class="chip" data-status="draft" title="click to hide or show these rows"><span class="dot" style="background:var(--draft)"></span>draft <span class="n">0</span></span>
+<span class="chip" data-status="open" title="click to hide or show these rows"><span class="dot" style="background:var(--open)"></span>open <span class="n">20</span></span>
+<span class="chip legend"><span class="dot" style="background:var(--group-line)"></span>group</span>
+</div><span class="spacer"></span>
+<input id="q" class="filter" type="search" placeholder="filter rows (symbol, id, text)">
+<button id="expand">Expand all</button><button id="collapse">Collapse all</button><button id="reset">Reset</button></div>
+<details class="panel" open data-sec="A"><summary><span class="letter">A</span><span class="title">Technology, factor markets, and ideas production</span><span class="meta"><span class="shown">18</span> of 18 parameters</span><span class="mini"><span class="pill decided" title="decided">15</span><span class="pill discuss" title="discuss">3</span></span><span class="chev">&#9656;</span></summary>
+<div class="wrap"><table><colgroup><col style="width:6%"><col style="width:11%"><col style="width:8%"><col style="width:6%"><col style="width:10%"><col style="width:6%"><col style="width:6%"><col style="width:12%"><col style="width:28%"><col style="width:7%"></colgroup><thead><tr>
+<th>Symbol</th>
+<th>Parameter (code)</th>
+<th>Meaning</th>
+<th>US value</th>
+<th>US source</th>
+<th>EU treatment</th>
+<th>EU value</th>
+<th>EU source / hint</th>
+<th class="just">Justification</th>
+<th>Status</th>
+</tr></thead><tbody>
+<tr class="decided" data-status="decided">
+<td class="sym"><i>σ</i></td>
+<td class="code"><span class="id">sigma</span><span class="loc">Calibration.sigma</span></td>
+<td class="meaning">how easily tasks substitute for one another in production</td>
+<td class="num">0.5</td>
+<td class="src"><p>gross complements (Acemoglu and Restrepo, 2022; Humlum, 2019; Jones and Tonetti, 2026)</p></td>
+<td class="treat">retain</td>
+<td class="num euval">0.5</td>
+<td class="src"><p>Antropic Scenario from Acemoglu and Restrepo (2022) and Humlum (2019)</p></td>
+<td class="just"><p>Two reasons to keep the same value: - the Antropic calibration gets this number from Humlum (2019) estimated on Danish microdata. - this is a production technology parameter not an institutional one, so no EU-specific channel.</p></td>
+<td><span class="pill decided">decided</span></td>
+</tr>
+<tr class="decided" data-status="decided">
+<td class="sym"><i>s</i><sub>L,t0</sub></td>
+<td class="code"><span class="id">s_L</span><span class="loc">Calibration.s_L</span></td>
+<td class="meaning">share of output paid to labour in the base year (rest goes to capital)</td>
+<td class="num">0.6</td>
+<td class="src"><p>conventional value for the U.S.</p></td>
+<td class="treat">recalibrate</td>
+<td class="num euval">0.63</td>
+<td class="src"><p>AMECO series of the adjusted wage share as a percentage of GDP at current factor cost. The same series gives the US 60.5 for 2015-19, which is approx the 0.60 value of Antropic. Source: <a href="https://db.nomics.world/AMECO/ALCD2" target="_blank" rel="noopener">https://db.nomics.world/AMECO/ALCD2</a>.</p></td>
+<td class="just"><p>The value of 0.60 that Antropic uses matches the adjusted labour share at factor cost (self-employed income imputed to labour, indirect taxes excluded). The EU-27 value of this concept has been roughly stable at 0.63 since 2010.</p></td>
+<td><span class="pill decided">decided</span></td>
+</tr>
+<tr class="decided" data-status="decided">
+<td class="sym"><i>s</i><sub>C,t0</sub> <i>/</i> <i>s</i><sub>L,t0</sub></td>
+<td class="code"><span class="id">share_C</span><span class="loc">Calibration.share_C (property; from Calibration.shares, or Calibration.share_C_override)</span></td>
+<td class="meaning">share of employment in cognitive occupations</td>
+<td class="num">0.624</td>
+<td class="src"><p>CPS 2025 counts: share of employees in SOC 11-29, 41, 43</p></td>
+<td class="treat">recalculate</td>
+<td class="num euval">0.6134</td>
+<td class="src"><p>Eurostat EU-LFS employment by detailed occupation (for EU-27, 15+) in 2025: ISCO-08 groups 1-4 plus 52 (sales workers) / civilian employment. Extracted in data/ where we compute the share for 2024 = 0.609. Source: <a href="https://ec.europa.eu/eurostat/databrowser/view/lfsa_egai2d" target="_blank" rel="noopener">https://ec.europa.eu/eurostat/databrowser/view/lfsa_egai2d</a></p></td>
+<td class="just"><p>Antropic defines cognitive work by occupation code (SOC 11-29, 41, 43). We use the EU equivalent but based on ISCO codes:</p><ul><li>groups 1-4 (managers, professionals, technicians, clerical)</li><li>+ group 52 (sales). The rest of group 5 is SOC 31-39 which are excluded</li></ul><p>Two further points:</p><ul><li>sales is the only mapping choice that matters: 0.55 without and 0.71 with all of group 5.</li><li>the ISCO mapping is a bit different from SOC: adds e.g. medical assistants, pilots but teaching aides and couriers.</li><li>The US on this same definition is ~0.635 (not 0.624).</li></ul></td>
+<td><span class="pill decided">decided</span></td>
+</tr>
+<tr class="discuss" data-status="discuss">
+<td class="sym"><i>ε</i></td>
+<td class="code"><span class="id">eps</span><span class="loc">Calibration.eps</span></td>
+<td class="meaning">how strongly the capital stock expands when the return to capital rises</td>
+<td class="num">3</td>
+<td class="src"><p>half the long-run wealth elasticity of Moll et al. (2022)</p></td>
+<td class="treat">retain</td>
+<td class="num euval">3</td>
+<td class="src"><p>Antropic / half of Moll, Rachel and Restrepo (2022)</p></td>
+<td class="just"><p>This parameter is important for several reasons</p><ul><li>it is a judgement value and not an estimate</li><li>it is the parameter the wage-capital split is most sensitive to</li><li>deciding on a value is not trivial so we should probably keep a range like Antropic</li></ul><p>Some further notes:</p><ul><li>there is no EU estimate of this reduced-form elasticity or of the underlying wealth elasticity</li><li>not trivial to obtain either: needs household panel with wealth info and a shock to returns</li><li>the US value itself is not estimated either: Moll et al. pick a preference parameter to hit a long-run semi-elasticity, we would need a full European recalibration and credible semi-elasticity target</li><li>difficult to even guess whether it would be lower/higher as there are offsetting arguments:</li><li>we are a net capital exporter (more elastic)</li><li>but have more shallow capital markets (less elastic).</li></ul></td>
+<td><span class="pill discuss">discuss</span></td>
+</tr>
+<tr class="decided grouped group-first" data-status="decided">
+<td class="sym"><i>r̄</i></td>
+<td class="code"><span class="id">r_bar</span><span class="loc">Calibration.r_bar</span><span class="grouplabel">group: capital return (r_bar, delta and K/Y are one identity, s_K = r_bar x K/Y)</span></td>
+<td class="meaning">annual gross return to capital without AI (net return + depreciation)</td>
+<td class="num">0.115</td>
+<td class="src"><p>Moll et al. (2022) net return 6.5 percent, K/Y = 3.5</p></td>
+<td class="treat">recalculate</td>
+<td class="num euval">0.11</td>
+<td class="src"><p>R = s_K / (K/Y) with s_K = 0.37 and K/Y = 3.32: net fixed assets at current replacement cost over GDP for 26 Member States in 2023. Extracts in data/, computed by compute_KY.py. Source: <a href="https://ec.europa.eu/eurostat/databrowser/view/nama_10_nfa_st" target="_blank" rel="noopener">https://ec.europa.eu/eurostat/databrowser/view/nama_10_nfa_st</a></p></td>
+<td class="just"><p>Antropic obtains number from Moll et al. (2022) who state: &quot;K/Y = 3, which implies R = 11.5%&quot;. This K/Y value is based on longer term assumption (1980 US). The K/Y = 3.5 from antropic is implied by 0.4 / 0.115.</p><ul><li>the concept behind this is the return to capital at replacement cost. This is measured directly in EU national accounts.</li><li>if we retained 0.115 this would imply K/Y = 3.22. This is within 3% of the measured 3.32 anyway.</li></ul></td>
+<td><span class="pill decided">decided</span></td>
+</tr>
+<tr class="decided grouped group-last" data-status="decided">
+<td class="sym"><i>δ</i></td>
+<td class="code"><span class="id">delta</span><span class="loc">Calibration.delta</span></td>
+<td class="meaning">share of the capital stock that wears out each year</td>
+<td class="num">0.05</td>
+<td class="src"><p>Moll et al. (2022); net return 6.5 percent, K/Y = 3.5</p></td>
+<td class="treat">recalculate</td>
+<td class="num euval">0.055</td>
+<td class="src"><p>Consumption of fixed capital / net fixed assets = (CFC/GDP) / (K/Y) = 0.183 / 3.32. EU-27 for 2023 (AMECO UKCT / UVGD for CFC and GDP; Eurostat as for r_bar). Computed by compute_KY.py. Source: <a href="https://db.nomics.world/AMECO/UKCT" target="_blank" rel="noopener">https://db.nomics.world/AMECO/UKCT</a></p></td>
+<td class="just"><p>The US measured the same way gives 0.052 which is essentially Antropic rounds to 0.05.</p><ul><li>net return r = 0.11 - 0.055 = 5.5%</li><li>vs 6.5% in Antropic and 7.4% for US measured this way</li></ul></td>
+<td><span class="pill decided">decided</span></td>
+</tr>
+<tr class="decided" data-status="decided">
+<td class="sym"><i>t0</i></td>
+<td class="code"><span class="id">t0</span><span class="loc">Calibration.t0</span></td>
+<td class="meaning">base year of the exercise</td>
+<td class="num">2024.0</td>
+<td class="src"></td>
+<td class="treat">retain</td>
+<td class="num euval">2024.0</td>
+<td class="src"><p>Antropic</p></td>
+<td class="just"><ul><li>The base period of the exercise (not an economic quantity) - Keeping the same window to make the EU and US scenarios comparable</li></ul></td>
+<td><span class="pill decided">decided</span></td>
+</tr>
+<tr class="decided" data-status="decided">
+<td class="sym"></td>
+<td class="code"><span class="id">t_anchor</span><span class="loc">Calibration.t_anchor</span></td>
+<td class="meaning">date at which AI exposure and adoption are observed in the data (mid-2026)</td>
+<td class="num">2026.5</td>
+<td class="src"></td>
+<td class="treat">retain</td>
+<td class="num euval">2026.5</td>
+<td class="src"><p>Antropic</p></td>
+<td class="just"><div class="en">(i) The date at which the affected mass and diffusion share are observed (m_anchor, d_anchor).</div><div class="en">(ii) Look for EU anchors for those measured at the same date or change the date</div></td>
+<td><span class="pill decided">decided</span></td>
+</tr>
+<tr class="decided" data-status="decided">
+<td class="sym"></td>
+<td class="code"><span class="id">t_read</span><span class="loc">Calibration.t_read</span></td>
+<td class="meaning">date at which the scenario outcomes are reported (start of 2030)</td>
+<td class="num">2030.0</td>
+<td class="src"></td>
+<td class="treat">retain</td>
+<td class="num euval">2030.0</td>
+<td class="src"><p>Antropic</p></td>
+<td class="just"><ul><li>antropic reports everything at the start of 2030 - same horizon for the EU keeps the tables comparable</li></ul></td>
+<td><span class="pill decided">decided</span></td>
+</tr>
+<tr class="decided" data-status="decided">
+<td class="sym"><i>h</i></td>
+<td class="code"><span class="id">months_per_year</span><span class="loc">Calibration.months_per_year</span></td>
+<td class="meaning">length of one model period (code stores periods per year)</td>
+<td class="num">12</td>
+<td class="src"></td>
+<td class="treat">retain</td>
+<td class="num euval">12</td>
+<td class="src"><p>Antropic</p></td>
+<td class="just"><ul><li>Period length of the model and not a data frequency: the model needs monthly rates, not monthly data. - EU flow data are quarterly unlike the monthly CPS and JOLTS. Quarterly transition probabilities are converted to monthly hazards with the time-aggregation correction of Shimer (2012) / Elsby, Hobijn and Sahin (2013).</li></ul></td>
+<td><span class="pill decided">decided</span></td>
+</tr>
+<tr class="decided" data-status="decided">
+<td class="sym"><i>λ</i></td>
+<td class="code"><span class="id">lam</span><span class="loc">Calibration.lam</span></td>
+<td class="meaning">how research effort turns into new ideas</td>
+<td class="num">1</td>
+<td class="src"><p>no duplication</p></td>
+<td class="treat">retain</td>
+<td class="num euval">1</td>
+<td class="src"><p>Antropic (Jones-type ideas production function with no duplication of research effort)</p></td>
+<td class="just"><p>Structural parameter of the ideas production function. A value of one means no duplication of effort</p><ul><li>i.e. twice the number of researchers is twice the number of ideas</li></ul><p>Convention about how ideas are produced with no EU-specific channel.</p><ul><li>but this ideas channel is small by 2030 in any case</li></ul></td>
+<td><span class="pill decided">decided</span></td>
+</tr>
+<tr class="decided" data-status="decided">
+<td class="sym"><i>1</i> <i>−</i> <i>ϕ</i></td>
+<td class="code"><span class="id">one_minus_phi</span><span class="loc">Calibration.one_minus_phi</span></td>
+<td class="meaning">how much harder new ideas are to find as the ideas stock grows</td>
+<td class="num">3.1</td>
+<td class="src"><p>Bloom et al. (2020)</p></td>
+<td class="treat">retain</td>
+<td class="num euval">3.1</td>
+<td class="src"><p>Antropic / Bloom, Jones, Van Reenen and Webb (2020), &quot;Are Ideas Getting Harder to Find?&quot;, aggregate US estimate of the fishing-out exponent (their beta).</p></td>
+<td class="just"><p>How fast research productivity falls as the ideas stock grows.</p><ul><li>a property of the idea space and not a given economy</li><li>the EU draws on the same world frontier, so the US estimate is the natural value</li><li>and Boeing and Huenermund (2020) find similar values in German data</li></ul></td>
+<td><span class="pill decided">decided</span></td>
+</tr>
+<tr class="decided" data-status="decided">
+<td class="sym"><i>1</i> <i>−</i> <i>ϕ</i><sub>R</sub></td>
+<td class="code"><span class="id">one_minus_phi_R</span><span class="derived">[derived]</span><span class="loc">Calibration.one_minus_phi_R (property)</span></td>
+<td class="meaning">the same effect restated in model units: derived (not set)</td>
+<td class="num">2.86</td>
+<td class="src"><p>Equation (40)</p></td>
+<td class="treat">derived</td>
+<td class="num euval"></td>
+<td class="src"><p>identity in the model, see formula</p></td>
+<td class="just"><p>Derived: s_L x (1 - phi) + lambda = 0.63 x 3.1 + 1 = 2.95 for the EU (2.86 in Antropic). The loader refuses a value here; change the inputs instead.</p></td>
+<td><span class="pill decided">decided</span></td>
+</tr>
+<tr class="decided" data-status="decided">
+<td class="sym"><i>g</i></td>
+<td class="code"><span class="id">g</span><span class="derived">[derived]</span><span class="loc">Calibration.g (property)</span></td>
+<td class="meaning">annual growth of the ideas stock without AI (model units) derived from TFP growth and the labour share</td>
+<td class="num">0.0167</td>
+<td class="src"><p>postwar TFP growth</p></td>
+<td class="treat">derived</td>
+<td class="num euval"></td>
+<td class="src"><p>identity in the model, see formula</p></td>
+<td class="just"><p>Derived: g_A / s_L. With the EU labour share of 0.63 and the EU g_A decided below, the loader computes it. Antropic: 0.010 / 0.60 = 0.0167.</p></td>
+<td><span class="pill decided">decided</span></td>
+</tr>
+<tr class="discuss grouped group-first" data-status="discuss">
+<td class="sym"><i>g</i><sub>A</sub></td>
+<td class="code"><span class="id">g_A</span><span class="loc">Calibration.g_A</span><span class="grouplabel">group: no-AI trend growth (g_A / s_L + n should match EU potential growth, 1.3-1.4%)</span></td>
+<td class="meaning">annual trend growth of measured productivity (TFP) without AI</td>
+<td class="num">0.01</td>
+<td class="src"><p>postwar TFP growth</p></td>
+<td class="treat">recalibrate</td>
+<td class="num euval">0.008</td>
+<td class="src"><p>AMECO series of total factor productivity for EU-27. Average log growth 1995-2024 is 0.77% a year. The same series and window give the US 1.09%, which is approx Antropic&#x27;s 0.010. Extract in data/. Source: <a href="https://db.nomics.world/AMECO/ZVGDF" target="_blank" rel="noopener">https://db.nomics.world/AMECO/ZVGDF</a></p></td>
+<td class="just"><p>Trend TFP growth without AI. This is used for the no-AI baseline and the ideas stock. An important note:</p><ul><li>the post-2019 slump is kept: not known whether it is temporary or permanent</li><li>leaving it out (1995-2019) gives 0.89%; the slump years alone (2019-2024) give 0.19%</li><li>could also use this value as a check</li></ul><p>Consistency with n: g = 0.008 / 0.63 = 1.27% matching the Commission&#x27;s 1.3-1.4% EU potential growth (AMECO OVGDP)</p><ul><li>leaves about 0.1% for labour-force growth.</li></ul></td>
+<td><span class="pill discuss">discuss</span></td>
+</tr>
+<tr class="discuss grouped group-last" data-status="discuss">
+<td class="sym"><i>n</i></td>
+<td class="code"><span class="id">n</span><span class="loc">Calibration.n</span></td>
+<td class="meaning">annual growth of the labour force without AI</td>
+<td class="num">0.0033</td>
+<td class="src"><p>Set so that GDP grows at 2 percent without AI. The BLS projections put labor-force growth near 0.4</p></td>
+<td class="treat">recalibrate</td>
+<td class="num euval">0.001</td>
+<td class="src"><p>GDP without AI grows at g + n. The Commission estimates the EU economy can grow 1.3-1.4% a year We already have g = 1.27% (TFP growth / labour share). Leaves about 0.1% a year for the labour force, so n = 0.001. Check against labour-force data: the EU labour force grew 0.6% a year over 2015-2024 and the Commission forecasts +0.45% a year to 2027 (AMECO NLTN); but the population aged 20-64 is projected to shrink 0.37% a year to 2030 (Eurostat EUROPOP2023) and the 2024 Ageing Report has the labour force falling 0.3% a year in the long run. Sources: <a href="https://db.nomics.world/AMECO/OVGDP" target="_blank" rel="noopener">https://db.nomics.world/AMECO/OVGDP</a>, <a href="https://db.nomics.world/AMECO/NLTN" target="_blank" rel="noopener">https://db.nomics.world/AMECO/NLTN</a>, <a href="https://ec.europa.eu/eurostat/databrowser/view/proj_23np" target="_blank" rel="noopener">https://ec.europa.eu/eurostat/databrowser/view/proj_23np</a></p></td>
+<td class="just"><p>Antropic does the same for the US: pick n so GDP without AI grows 2% a year. They note that BLS projects labour-force growth of about 0.4%. Here n is picked so that GDP without AI grows at the Commission&#x27;s 1.3-1.4%.</p><ul><li>n only changes the reported no-AI GDP growth and level</li><li>the data checks point in the opposite directions: the labour force has been growing (more</li></ul><p>people working, migration)</p><ul><li>but every projection has the shrinking working-age population winning by 2030</li><li>the 0.1% value sits in between</li></ul></td>
+<td><span class="pill discuss">discuss</span></td>
+</tr>
+<tr class="decided" data-status="decided">
+<td class="sym"><i>ι</i><sub>R,t0</sub></td>
+<td class="code"><span class="id">iota_R</span><span class="loc">Calibration.iota_R</span></td>
+<td class="meaning">share of GDP spent on research in 2024</td>
+<td class="num">0.035</td>
+<td class="src"><p>R&amp;D share in the national accounts</p></td>
+<td class="treat">recalibrate</td>
+<td class="num euval">0.023</td>
+<td class="src"><p>Eurostat R&amp;D expenditure as % of GDP (EU-27 2024): 2.26 (US = 3.44, Antropic&#x27;s 0.035). Extract in data/. Source: <a href="https://ec.europa.eu/eurostat/databrowser/view/rd_e_gerdtot" target="_blank" rel="noopener">https://ec.europa.eu/eurostat/databrowser/view/rd_e_gerdtot</a></p></td>
+<td class="just"><p>Documentation only: the simulation never reads this field. Antropic uses it to show that its chosen TFP growth is consistent with the research effort. The EU spends 2.3% of GDP on R&amp;D against 3.4% in the US. Recorded so the EU table is internally consistent, with no effect on results.</p></td>
+<td><span class="pill decided">decided</span></td>
+</tr>
+<tr class="decided" data-status="decided">
+<td class="sym"><i>g</i><sub>ι</sub></td>
+<td class="code"><span class="id">g_iota</span><span class="loc">not in code</span></td>
+<td class="meaning">trend growth of the research share of GDP, per year (documentation only, not used by the model)</td>
+<td class="num">0.028</td>
+<td class="src"><p>Equation (41) in Appendix C</p></td>
+<td class="treat">recalibrate</td>
+<td class="num euval">0.01</td>
+<td class="src"><p>Eurostat EU-27 R&amp;D share rose from 1.96% (2010) to 2.26% (2024): 1.0% a year. The US share rose 1.7% a year over the same years (Antropic: 0.028). Source: <a href="https://ec.europa.eu/eurostat/databrowser/view/rd_e_gerdtot" target="_blank" rel="noopener">https://ec.europa.eu/eurostat/databrowser/view/rd_e_gerdtot</a></p></td>
+<td class="just"><p>Documentation only: not in the code. Antropic uses it to reconcile TFP growth with research effort growth. We take g_A from the data directly. Recorded for completeness; no effect on results.</p></td>
+<td><span class="pill decided">decided</span></td>
+</tr>
+</tbody></table></div><div class="empty">No rows match the current filter.</div></details>
+<details class="panel" open data-sec="B"><summary><span class="letter">B</span><span class="title">AI in the production of goods and services</span><span class="meta"><span class="shown">8</span> of 8 parameters</span><span class="mini"><span class="pill open" title="open">8</span></span><span class="chev">&#9656;</span></summary>
+<div class="wrap"><table><colgroup><col style="width:6%"><col style="width:11%"><col style="width:8%"><col style="width:6%"><col style="width:10%"><col style="width:6%"><col style="width:6%"><col style="width:12%"><col style="width:28%"><col style="width:7%"></colgroup><thead><tr>
+<th>Symbol</th>
+<th>Parameter (code)</th>
+<th>Meaning</th>
+<th>US value</th>
+<th>US source</th>
+<th>EU treatment</th>
+<th>EU value</th>
+<th>EU source / hint</th>
+<th class="just">Justification</th>
+<th>Status</th>
+</tr></thead><tbody>
+<tr class="open" data-status="open">
+<td class="sym"><i>m</i><sub>t</sub></td>
+<td class="code"><span class="id">m_anchor</span><span class="loc">Calibration.m_anchor</span></td>
+<td class="meaning">share of cognitive work that AI can already do at the mid-2026 anchor (the affected mass)</td>
+<td class="num">0.14</td>
+<td class="src"><p>observed exposure, averaged over occupations (Massenkoff and McCrory, 2026)</p></td>
+<td class="treat"></td>
+<td class="num euval"></td>
+<td class="src"><p>This is where European task-content evidence belongs: Cedefop ESJS wave 2 (2021, ~46k workers, digital and task items; Cedefop&#x27;s AI-exposure work on it), Eurofound EWCS 2021, and the ECB mapping of the Felten / Webb AI-exposure indices to ISCO occupations in Europe.</p></td>
+<td class="just"></td>
+<td><span class="pill open">open</span></td>
+</tr>
+<tr class="open" data-status="open">
+<td class="sym"><i>m</i><sub>2030</sub></td>
+<td class="code"><span class="id">m_2030</span><span class="loc">Scenario.m_2030</span></td>
+<td class="meaning">share of cognitive work AI can do by 2030, per scenario</td>
+<td class="num">0.2 / 0.3 / 0.5<span class="mse">modest / substantial / extreme</span></td>
+<td class="src"><p>scenario assumptions: the low end, middle, and near the high end of rated feasibility (Eloundou et al., 2024)</p></td>
+<td class="treat"></td>
+<td class="num euval"></td>
+<td class="src"><p>Scenario assumption; see m_anchor for the European task-content surveys (Cedefop ESJS, Eurofound EWCS) if an EU-specific feasibility range is wanted.</p></td>
+<td class="just"></td>
+<td><span class="pill open">open</span></td>
+</tr>
+<tr class="open" data-status="open">
+<td class="sym"><i>m̄</i></td>
+<td class="code"><span class="id">m_ceiling</span><span class="derived">[derived]</span><span class="loc">Calibration.m_bar (property; Calibration.m_ceiling overrides)</span></td>
+<td class="meaning">the most work AI can ever affect: all cognitive work</td>
+<td class="num">0.624</td>
+<td class="src"><p>all cognitive work</p></td>
+<td class="treat"></td>
+<td class="num euval"></td>
+<td class="src"><p>follows from share_C unless a lower ceiling is wanted</p></td>
+<td class="just"></td>
+<td><span class="pill open">open</span></td>
+</tr>
+<tr class="open" data-status="open">
+<td class="sym"><i>d</i><sub>t</sub></td>
+<td class="code"><span class="id">d_anchor</span><span class="loc">Calibration.d_anchor</span></td>
+<td class="meaning">share of the affected work where AI is actually in use at the mid-2026 anchor (diffusion)</td>
+<td class="num">0.1</td>
+<td class="src"><p>firm AI use, Business Trends and Outlook Survey and its 2026 AI supplement (U.S. Census Bureau, 2026; Bonney et al., 2026)</p></td>
+<td class="treat"></td>
+<td class="num euval"></td>
+<td class="src"><p>This is where the US-EU adoption gap belongs. Bick, Blandin, Deming, Fuchs-Schündeln and Jessen (2026), &quot;Mind the Gap: AI Adoption in Europe and the US&quot; (CEPR DP 21337 / St. Louis Fed WP 2026-003): 43% of US workers used genAI at work in early 2026 vs 26-36% in DE, UK, FR, IT, SE, NL; over 95% of the gap is workforce composition plus employer encouragement. Firm-side source: Eurostat ICT usage in enterprises (isoc_eb_ai), share of enterprises using AI, EU-27 vs the US BTOS anchor.</p></td>
+<td class="just"></td>
+<td><span class="pill open">open</span></td>
+</tr>
+<tr class="open" data-status="open">
+<td class="sym"><i>d</i><sub>2030</sub></td>
+<td class="code"><span class="id">d_2030</span><span class="loc">Scenario.d_2030</span></td>
+<td class="meaning">share of the affected work where AI is in use by 2030, per scenario</td>
+<td class="num">0.2 / 0.4 / 0.6<span class="mse">modest / substantial / extreme</span></td>
+<td class="src"><p>scenario assumptions</p></td>
+<td class="treat"></td>
+<td class="num euval"></td>
+<td class="src"></td>
+<td class="just"></td>
+<td><span class="pill open">open</span></td>
+</tr>
+<tr class="open" data-status="open">
+<td class="sym"><i>d̄</i></td>
+<td class="code"><span class="id">d_ceiling</span><span class="loc">Calibration.d_ceiling</span></td>
+<td class="meaning">the most diffusion can reach: every affected task</td>
+<td class="num">1</td>
+<td class="src"><p>every instance</p></td>
+<td class="treat"></td>
+<td class="num euval"></td>
+<td class="src"></td>
+<td class="just"></td>
+<td><span class="pill open">open</span></td>
+</tr>
+<tr class="open" data-status="open">
+<td class="sym"><i>a</i><sub>t</sub></td>
+<td class="code"><span class="id">a_anchor</span><span class="loc">Scenario.a_anchor</span></td>
+<td class="meaning">productivity gain where AI is in use, at the anchor, in log points (0.30 is about 35 percent more output per task)</td>
+<td class="num">0.3 / 0.35 / 0.45<span class="mse">modest / substantial / extreme</span></td>
+<td class="src"><p>scenario assumptions: all-in gains in trials and at the frontier (Brynjolfsson et al., 2025; Huang et al., 2025; Demirer et al., 2026)</p></td>
+<td class="treat"></td>
+<td class="num euval"></td>
+<td class="src"></td>
+<td class="just"></td>
+<td><span class="pill open">open</span></td>
+</tr>
+<tr class="open" data-status="open">
+<td class="sym"><i>g</i><sub>a</sub></td>
+<td class="code"><span class="id">g_a</span><span class="loc">Scenario.g_a</span></td>
+<td class="meaning">yearly increase in that productivity gain, in log points</td>
+<td class="num">0 / 0.028 / 0.1<span class="mse">modest / substantial / extreme</span></td>
+<td class="src"><p>scenario assumptions which imply a_2030 = 0.30 / 0.45 / 0.80</p></td>
+<td class="treat"></td>
+<td class="num euval"></td>
+<td class="src"></td>
+<td class="just"></td>
+<td><span class="pill open">open</span></td>
+</tr>
+</tbody></table></div><div class="empty">No rows match the current filter.</div></details>
+<details class="panel" open data-sec="C"><summary><span class="letter">C</span><span class="title">Disruptiveness, automation, new tasks, and search once AI arrives</span><span class="meta"><span class="shown">5</span> of 5 parameters</span><span class="mini"><span class="pill open" title="open">5</span></span><span class="chev">&#9656;</span></summary>
+<div class="wrap"><table><colgroup><col style="width:6%"><col style="width:11%"><col style="width:8%"><col style="width:6%"><col style="width:10%"><col style="width:6%"><col style="width:6%"><col style="width:12%"><col style="width:28%"><col style="width:7%"></colgroup><thead><tr>
+<th>Symbol</th>
+<th>Parameter (code)</th>
+<th>Meaning</th>
+<th>US value</th>
+<th>US source</th>
+<th>EU treatment</th>
+<th>EU value</th>
+<th>EU source / hint</th>
+<th class="just">Justification</th>
+<th>Status</th>
+</tr></thead><tbody>
+<tr class="open" data-status="open">
+<td class="sym"><i>ψ</i><sub>t</sub></td>
+<td class="code"><span class="id">psi</span><span class="loc">Scenario.psi</span></td>
+<td class="meaning">share of AI use that replaces the worker on the task (automation) rather than assisting them</td>
+<td class="num">0.5 / 0.75 / 0.9<span class="mse">modest / substantial / extreme</span></td>
+<td class="src"><p>scenario assumptions: on the low end similar to the current automation-like share of use (Appel et al., 2025)</p></td>
+<td class="treat"></td>
+<td class="num euval"></td>
+<td class="src"></td>
+<td class="just"></td>
+<td><span class="pill open">open</span></td>
+</tr>
+<tr class="open" data-status="open">
+<td class="sym"><i>ρ</i></td>
+<td class="code"><span class="id">rho</span><span class="loc">Scenario.rho</span></td>
+<td class="meaning">share of the displaced work that comes back as new tasks for workers (reinstatement)</td>
+<td class="num">0.5 / 0.25 / 0<span class="mse">modest / substantial / extreme</span></td>
+<td class="src"><p>scenario assumptions: Acemoglu and Restrepo (2019) estimated rho = 0.5</p></td>
+<td class="treat"></td>
+<td class="num euval"></td>
+<td class="src"></td>
+<td class="just"></td>
+<td><span class="pill open">open</span></td>
+</tr>
+<tr class="open" data-status="open">
+<td class="sym"><i>μ</i></td>
+<td class="code"><span class="id">mu</span><span class="loc">Scenario.mu</span></td>
+<td class="meaning">once AI arrives, how effectively an unemployed worker from the other occupation group competes for a job in this group (1 = as well as insiders; lower = harder to switch)</td>
+<td class="num">0.17 / 0.08 / 0.04<span class="mse">modest / substantial / extreme</span></td>
+<td class="src"><p>scenario assumptions: mu_bar = 0.17 is the value consistent with normal-times occupational switching estimated from CPS</p></td>
+<td class="treat"></td>
+<td class="num euval"></td>
+<td class="src"></td>
+<td class="just"></td>
+<td><span class="pill open">open</span></td>
+</tr>
+<tr class="open" data-status="open">
+<td class="sym"><i>θ</i><sub>H</sub></td>
+<td class="code"><span class="id">theta_H</span><span class="loc">Scenario.theta_H</span></td>
+<td class="meaning">speed at which firms post the jobs that AI creates or frees up, per month</td>
+<td class="num">0.1 / 0.25 / 0.5<span class="mse">modest / substantial / extreme</span></td>
+<td class="src"><p>scenario assumptions</p></td>
+<td class="treat"></td>
+<td class="num euval"></td>
+<td class="src"></td>
+<td class="just"></td>
+<td><span class="pill open">open</span></td>
+</tr>
+<tr class="open" data-status="open">
+<td class="sym"><i>ξ</i></td>
+<td class="code"><span class="id">xi</span><span class="loc">Calibration.xi</span></td>
+<td class="meaning">stickiness of the cognitive wage: the fraction of its gap to the market-clearing level that still remains after a year (0.5 = half; higher = stickier)</td>
+<td class="num">0.5</td>
+<td class="src"><p>wage-setting evidence (Section 3.4)</p></td>
+<td class="treat"></td>
+<td class="num euval"></td>
+<td class="src"></td>
+<td class="just"></td>
+<td><span class="pill open">open</span></td>
+</tr>
+</tbody></table></div><div class="empty">No rows match the current filter.</div></details>
+<details class="panel" open data-sec="D"><summary><span class="letter">D</span><span class="title">The labor market in normal times</span><span class="meta"><span class="shown">7</span> of 7 parameters</span><span class="mini"><span class="pill open" title="open">7</span></span><span class="chev">&#9656;</span></summary>
+<div class="wrap"><table><colgroup><col style="width:6%"><col style="width:11%"><col style="width:8%"><col style="width:6%"><col style="width:10%"><col style="width:6%"><col style="width:6%"><col style="width:12%"><col style="width:28%"><col style="width:7%"></colgroup><thead><tr>
+<th>Symbol</th>
+<th>Parameter (code)</th>
+<th>Meaning</th>
+<th>US value</th>
+<th>US source</th>
+<th>EU treatment</th>
+<th>EU value</th>
+<th>EU source / hint</th>
+<th class="just">Justification</th>
+<th>Status</th>
+</tr></thead><tbody>
+<tr class="open" data-status="open">
+<td class="sym"><i>q̄</i></td>
+<td class="code"><span class="id">q_bar_annual</span><span class="loc">Calibration.q_bar_annual</span></td>
+<td class="meaning">share of employed workers who quit their job in a normal year</td>
+<td class="num">0.11</td>
+<td class="src"><p>implied by the pool and the CPS finding rate, rounded (Section 3.2)</p></td>
+<td class="treat"></td>
+<td class="num euval"></td>
+<td class="src"></td>
+<td class="just"></td>
+<td><span class="pill open">open</span></td>
+</tr>
+<tr class="open" data-status="open">
+<td class="sym"><i>q</i><sup>T</sup><sub>o</sub> <i>/</i> <i>q̄</i><sub>o</sub></td>
+<td class="code"><span class="id">q_T_share</span><span class="loc">Calibration.q_T_share</span></td>
+<td class="meaning">share of those quits that responds to how easy it is to find another job</td>
+<td class="num">0.55</td>
+<td class="src"><p>elasticity of JOLTS quits to the CPS finding rate (U.S. Bureau of Labor Statistics, 2026a) (Section 3.2)</p></td>
+<td class="treat"></td>
+<td class="num euval"></td>
+<td class="src"></td>
+<td class="just"></td>
+<td><span class="pill open">open</span></td>
+</tr>
+<tr class="open" data-status="open">
+<td class="sym"><i>q̄</i><sub>C</sub> <i>/</i> <i>q̄;</i> <i>q̄</i><sub>N</sub> <i>/</i> <i>q̄</i></td>
+<td class="code"><span class="id">sep_rel</span><span class="loc">Calibration.sep_rel (property; from Calibration.hazards, or Calibration.sep_rel_override)</span></td>
+<td class="meaning">how much more or less often each group separates into unemployment than the average worker (cognitive, other)</td>
+<td class="num">cognitive 0.69; other 1.52</td>
+<td class="src"><p>IPUMS-CPS 2010-19 (Flood et al., 2025)</p></td>
+<td class="treat"></td>
+<td class="num euval"></td>
+<td class="src"></td>
+<td class="just"></td>
+<td><span class="pill open">open</span></td>
+</tr>
+<tr class="open" data-status="open">
+<td class="sym"><i>Ū</i></td>
+<td class="code"><span class="id">U_bar</span><span class="loc">Calibration.U_bar</span></td>
+<td class="meaning">share of the labour force unemployed and searching in normal times (with a previous job)</td>
+<td class="num">0.038</td>
+<td class="src"><p>CPS 2025 (U.S. Bureau of Labor Statistics, 2026b)</p></td>
+<td class="treat"></td>
+<td class="num euval"></td>
+<td class="src"></td>
+<td class="just"></td>
+<td><span class="pill open">open</span></td>
+</tr>
+<tr class="open" data-status="open">
+<td class="sym"><i>μ̄</i></td>
+<td class="code"><span class="id">mu_bar</span><span class="loc">Calibration.mu_bar</span></td>
+<td class="meaning">in normal times, how effectively an unemployed worker competes for jobs in the other occupation group, set to match observed occupational switching</td>
+<td class="num">0.17</td>
+<td class="src"><p>CPS 2010-19 switching matrix from the replication files of Carrillo-Tudela and Visschers (2023b), corrected by their method (Section 3.2)</p></td>
+<td class="treat"></td>
+<td class="num euval"></td>
+<td class="src"></td>
+<td class="just"></td>
+<td><span class="pill open">open</span></td>
+</tr>
+<tr class="open" data-status="open">
+<td class="sym"><i>ι</i></td>
+<td class="code"><span class="id">iota</span><span class="loc">Calibration.iota</span></td>
+<td class="meaning">shape of the matching function: how sharply the chance of filling a vacancy falls as vacancies outnumber searchers</td>
+<td class="num">1.27</td>
+<td class="src"><p>den Haan et al. (2000)</p></td>
+<td class="treat"></td>
+<td class="num euval"></td>
+<td class="src"></td>
+<td class="just"></td>
+<td><span class="pill open">open</span></td>
+</tr>
+<tr class="open" data-status="open">
+<td class="sym"><i>π̄</i><sub>o</sub></td>
+<td class="code"><span class="id">pi_bar_mean</span><span class="loc">Calibration.pi_bar_mean</span></td>
+<td class="meaning">share of vacancies filled within a month in normal times</td>
+<td class="num">0.65</td>
+<td class="src"><p>JOLTS 2010-19, computed using the method of Davis et al. (2013)</p></td>
+<td class="treat"></td>
+<td class="num euval"></td>
+<td class="src"></td>
+<td class="just"></td>
+<td><span class="pill open">open</span></td>
+</tr>
+</tbody></table></div><div class="empty">No rows match the current filter.</div></details>
+<footer>38 parameters. 15 decided, 3 discuss, 0 draft, 20 open. Collapsed panels and filters are remembered in this browser.</footer>
+</div><script>
+(function(){
+  var KEY = 'calib-table-state';
+  var state = {collapsed:{}, statuses:{}, q:''};
+  try { var s = localStorage.getItem(KEY); if (s) state = Object.assign(state, JSON.parse(s)); } catch(e){}
+  function save(){ try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){} }
+  var panels = document.querySelectorAll('details.panel');
+  var chips = document.querySelectorAll('.chip[data-status]');
+  var q = document.getElementById('q');
+  panels.forEach(function(d){ if (state.collapsed[d.dataset.sec]) d.removeAttribute('open');
+    d.addEventListener('toggle', function(){ state.collapsed[d.dataset.sec] = !d.open; save(); }); });
+  chips.forEach(function(c){ var st = c.dataset.status; if (state.statuses[st] === false) c.classList.add('off');
+    c.addEventListener('click', function(){ c.classList.toggle('off'); state.statuses[st] = !c.classList.contains('off'); save(); apply(); }); });
+  q.value = state.q || '';
+  q.addEventListener('input', function(){ state.q = q.value; save(); apply(); });
+  document.getElementById('expand').addEventListener('click', function(){ panels.forEach(function(d){ d.open = true; }); });
+  document.getElementById('collapse').addEventListener('click', function(){ panels.forEach(function(d){ d.open = false; }); });
+  document.getElementById('reset').addEventListener('click', function(){ q.value=''; state.q='';
+    chips.forEach(function(c){ c.classList.remove('off'); }); state.statuses = {}; save(); apply(); });
+  function apply(){
+    var needle = (q.value || '').trim().toLowerCase();
+    var on = {}; chips.forEach(function(c){ on[c.dataset.status] = !c.classList.contains('off'); });
+    panels.forEach(function(d){
+      var shown = 0;
+      d.querySelectorAll('tbody tr').forEach(function(tr){
+        var ok = on[tr.dataset.status] !== false && (!needle || tr.textContent.toLowerCase().indexOf(needle) >= 0);
+        tr.classList.toggle('hide', !ok); if (ok) shown++;
+      });
+      d.classList.toggle('allhidden', shown === 0);
+      d.querySelector('.shown').textContent = shown;
+    });
+  }
+  apply();
+})();
+</script></body></html>

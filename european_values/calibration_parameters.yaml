@@ -1,0 +1,815 @@
+# Calibration of Korinek, Jones, Sacher, Cotter and McCrory (2026), "Economic Scenarios for
+# Transformative AI", Working Paper No. 2026-02, Table 1: every parameter, its US value and
+# source, and the EU recalibration decision for each.
+
+
+meta:
+  paper: Korinek, Jones, Sacher, Cotter and McCrory (2026), Economic Scenarios for Transformative AI
+  paper_table: Table 1, Calibration, parameters and scenario values
+  working_paper: The Anthropic Institute Working Paper No. 2026-02, September 2026
+  code_reference: code/econ_scenarios/calibration.py
+  converted_from: european_values/Table_1_Calibration_Parameters.docx
+  converted_on: 2026-10-08
+  scenarios: [modest, substantial, extreme]
+  table_note: >
+    A value common to the scenarios is given as a scalar; a scenario value as a mapping over the
+    three scenarios. The ceilings of the logistic paths are their natural maxima (m_bar = s_C/s_L,
+    d_bar = 1), and slope and midpoint follow from the 2026 anchor, 2030 value, and ceiling by
+    Equation (8').
+
+sections:
+  A: Technology, factor markets, and ideas production
+  B: AI in the production of goods and services
+  C: Disruptiveness, automation, new tasks, and search once AI arrives
+  D: The labor market in normal times
+
+parameters:
+
+  # ---------------------------------------------------------------------------------------------
+  # A. Technology, factor markets, and ideas production (common to the scenarios)
+  # ---------------------------------------------------------------------------------------------
+
+  - id: sigma
+    symbol: "σ"
+    section: A
+    meaning: >
+      how easily tasks substitute for one another in production
+    code: Calibration.sigma
+    us_value: 0.5
+    us_source: gross complements (Acemoglu and Restrepo, 2022; Humlum, 2019; Jones and Tonetti, 2026)
+    eu:
+      source_hint: >
+        Keep the US value which is already based on Humlum (2019) on Danish data
+      treatment: retain
+      value: 0.5
+      source: Antropic Scenario from Acemoglu and Restrepo (2022) and Humlum (2019)
+      justification: >
+        Two reasons to keep the same value: 
+        - the Antropic calibration gets this number from Humlum (2019) estimated on Danish microdata.
+        - this is a production technology parameter not an institutional one, so no EU-specific channel.
+      status: decided
+
+  - id: s_L
+    symbol: "s_L,t0"
+    section: A
+    meaning: >
+      share of output paid to labour in the base year (rest goes to capital)
+    code: Calibration.s_L
+    us_value: 0.60
+    us_source: conventional value for the U.S.
+    eu:
+      source_hint: >
+        Eurostat national accounts: adjusted compensation of employees / GDP for EU-27.
+      treatment: recalibrate
+      value: 0.63
+      source: >
+        AMECO series of the adjusted wage share as a percentage of GDP at current factor cost.
+        The same series gives the US 60.5 for 2015-19, which is approx the 0.60 value of Antropic.
+        Source: https://db.nomics.world/AMECO/ALCD2.
+      justification: >
+        The value of 0.60 that Antropic uses matches the adjusted labour share at factor cost
+        (self-employed income imputed to labour, indirect taxes excluded).
+        The EU-27 value of this concept has been roughly stable at 0.63 since 2010.
+      status: decided
+
+  - id: share_C
+    symbol: "s_C,t0 / s_L,t0"
+    section: A
+    meaning: >
+      share of employment in cognitive occupations
+    code: Calibration.share_C (property; from Calibration.shares, or Calibration.share_C_override)
+    us_value: 0.624
+    us_value_unrounded_note: the code uses the CPS 2025 counts
+    us_source: >
+      CPS 2025 counts: share of employees in SOC 11-29, 41, 43
+    eu:
+      source_hint: >
+        Eurostat Labour Force Survey (EU-LFS): approx same occupational groups in ISCO-08.
+        Preferably an EU-27 weighted share for 2024/2025.
+      treatment: recalculate
+      value: 0.6134
+      source: >
+        Eurostat EU-LFS employment by detailed occupation (for EU-27, 15+) in 2025:
+        ISCO-08 groups 1-4 plus 52 (sales workers) / civilian employment.
+        Extracted in data/ where we compute the share for 2024 = 0.609.
+        Source: https://ec.europa.eu/eurostat/databrowser/view/lfsa_egai2d
+      justification: >
+        Antropic defines cognitive work by occupation code (SOC 11-29, 41, 43).
+        We use the EU equivalent but based on ISCO codes:
+          - groups 1-4 (managers, professionals, technicians, clerical)
+          - + group 52 (sales). The rest of group 5 is SOC 31-39 which are excluded
+        Two further points:
+          - sales is the only mapping choice that matters: 0.55 without and 0.71 with all of group 5.
+          - the ISCO mapping is a bit different from SOC: adds e.g. medical assistants, pilots but teaching aides and couriers. 
+          - The US on this same definition is ~0.635 (not 0.624).
+      status: decided
+
+  - id: eps
+    symbol: "ε"
+    section: A
+    meaning: >
+      how strongly the capital stock expands when the return to capital rises
+    code: Calibration.eps
+    us_value: 3
+    us_source: half the long-run wealth elasticity of Moll et al. (2022)
+    eu:
+      source_hint: >
+        Retain unless an EU-specific wealth or capital-supply elasticity is estimated
+          - possible: ECBHS or Distributional Wealth Accounts literature
+      treatment: retain
+      value: 3
+      source: Antropic / half of Moll, Rachel and Restrepo (2022)
+      justification: >
+        This parameter is important for several reasons
+          - it is a judgement value and not an estimate
+          - it is the parameter the wage-capital split is most sensitive to
+          - deciding on a value is not trivial so we should probably keep a range like Antropic
+        Some further notes:
+          - there is no EU estimate of this reduced-form elasticity or of the underlying wealth elasticity
+            - not trivial to obtain either: needs household panel with wealth info and a shock to returns
+            - the US value itself is not estimated either: Moll et al. pick a preference parameter
+              to hit a long-run semi-elasticity, we would need a full European recalibration and credible semi-elasticity target
+          - difficult to even guess whether it would be lower/higher as there are offsetting arguments:
+            - we are a net capital exporter (more elastic)
+            - but have more shallow capital markets (less elastic).
+      status: discuss
+
+  - id: r_bar
+    symbol: "r̄"
+    section: A
+    group: capital return (r_bar, delta and K/Y are one identity, s_K = r_bar x K/Y)
+    meaning: >
+      annual gross return to capital without AI (net return + depreciation)
+    code: Calibration.r_bar
+    us_value: 0.115
+    us_source: Moll et al. (2022) net return 6.5 percent, K/Y = 3.5
+    eu:
+      source_hint: >
+        Decide jointly with delta and an EU capital-output ratio.
+        The US numbers satisfy: r_bar x K/Y = 0.115 x 3.5 = 0.40 = s_K.
+        With the EU s_L = 0.63, s_K = 0.37. Then r_bar = 0.37 / (EU K/Y).
+      treatment: recalculate
+      value: 0.11
+      source: >
+        R = s_K / (K/Y) with s_K = 0.37 and K/Y = 3.32: net fixed assets 
+        at current replacement cost over GDP for 26 Member States in 2023.
+        Extracts in data/, computed by compute_KY.py.
+        Source: https://ec.europa.eu/eurostat/databrowser/view/nama_10_nfa_st
+      justification: >
+        Antropic obtains number from Moll et al. (2022) who state: "K/Y = 3, which implies R = 11.5%".
+        This K/Y value is based on longer term assumption (1980 US). The K/Y = 3.5 from antropic is implied by 0.4 / 0.115.
+          - the concept behind this is the return to capital at replacement cost. This is measured directly in EU national accounts.
+          - if we retained 0.115 this would imply K/Y = 3.22. This is within 3% of the measured 3.32 anyway.
+      status: decided
+
+  - id: delta
+    symbol: "δ"
+    section: A
+    group: capital return (r_bar, delta and K/Y are one identity, s_K = r_bar x K/Y)
+    meaning: >
+      share of the capital stock that wears out each year
+    code: Calibration.delta
+    us_value: 0.05
+    us_source: Moll et al. (2022); net return 6.5 percent, K/Y = 3.5
+    eu:
+      source_hint: >
+        Decide jointly with r_bar: net return = r_bar - delta.
+        Where r_bar must satisfy r_bar x K/Y = s_K = 0.37 under EU labour share.
+      treatment: recalculate
+      value: 0.055
+      source: >
+        Consumption of fixed capital / net fixed assets = (CFC/GDP) / (K/Y) = 0.183 / 3.32.
+        EU-27 for 2023 (AMECO UKCT / UVGD for CFC and GDP; Eurostat as for r_bar). 
+        Computed by compute_KY.py.
+        Source: https://db.nomics.world/AMECO/UKCT
+      justification: >
+        The US measured the same way gives 0.052 which is essentially Antropic rounds to 0.05.
+          - net return r = 0.11 - 0.055 = 5.5%
+          - vs 6.5% in Antropic and 7.4% for US measured this way
+      status: decided
+
+  - id: t0
+    symbol: "t0"
+    section: A
+    meaning: >
+      base year of the exercise
+    code: Calibration.t0
+    us_value: 2024.0
+    us_source: null
+    eu:
+      source_hint: null
+      treatment: retain
+      value: 2024.0
+      source: Antropic
+      justification: >
+        - The base period of the exercise (not an economic quantity)
+        - Keeping the same window to make the EU and US scenarios comparable
+      status: decided
+
+  - id: t_anchor
+    symbol: null
+    section: A
+    meaning: >
+      date at which AI exposure and adoption are observed in the data (mid-2026)
+    code: Calibration.t_anchor
+    us_value: 2026.5
+    us_source: null
+    eu:
+      source_hint: null
+      treatment: retain
+      value: 2026.5
+      source: Antropic
+      justification: >
+        (i) The date at which the affected mass and diffusion share are observed (m_anchor, d_anchor).
+        (ii) Look for EU anchors for those measured at the same date or change the date
+      status: decided
+
+  - id: t_read
+    symbol: null
+    section: A
+    meaning: >
+      date at which the scenario outcomes are reported (start of 2030)
+    code: Calibration.t_read
+    us_value: 2030.0
+    us_source: null
+    eu:
+      source_hint: null
+      treatment: retain
+      value: 2030.0
+      source: Antropic
+      justification: >
+        - antropic reports everything at the start of 2030
+        - same horizon for the EU keeps the tables comparable
+      status: decided
+
+  - id: months_per_year
+    symbol: "h"
+    section: A
+    meaning: >
+      length of one model period (code stores periods per year)
+    code: Calibration.months_per_year
+    us_value: 12
+    us_source: null
+    eu:
+      source_hint: null
+      treatment: retain
+      value: 12
+      source: Antropic
+      justification: >
+        - Period length of the model and not a data frequency: the model needs monthly rates, not monthly data.
+        - EU flow data are quarterly unlike the monthly CPS and JOLTS. Quarterly transition probabilities are converted to monthly hazards with
+        the time-aggregation correction of Shimer (2012) / Elsby, Hobijn and Sahin (2013).
+      status: decided
+
+  - id: lam
+    symbol: "λ"
+    section: A
+    meaning: >
+      how research effort turns into new ideas
+    code: Calibration.lam
+    us_value: 1
+    us_source: no duplication
+    eu:
+      source_hint: null
+      treatment: retain
+      value: 1
+      source: Antropic (Jones-type ideas production function with no duplication of research effort)
+      justification: >
+        Structural parameter of the ideas production function. A value of one means no duplication of effort
+          - i.e. twice the number of researchers is twice the number of ideas
+        Convention about how ideas are produced with no EU-specific channel.
+          - but this ideas channel is small by 2030 in any case
+      status: decided
+
+  - id: one_minus_phi
+    symbol: "1 − ϕ"
+    section: A
+    meaning: >
+      how much harder new ideas are to find as the ideas stock grows
+    code: Calibration.one_minus_phi
+    us_value: 3.1
+    us_source: Bloom et al. (2020)
+    eu:
+      source_hint: null
+      treatment: retain
+      value: 3.1
+      source: >
+        Antropic / Bloom, Jones, Van Reenen and Webb (2020), "Are Ideas Getting Harder to Find?",
+        aggregate US estimate of the fishing-out exponent (their beta).
+      justification: >
+        How fast research productivity falls as the ideas stock grows.
+         - a property of the idea space and not a given economy
+         - the EU draws on the same world frontier, so the US estimate is the natural value
+         - and Boeing and Huenermund (2020) find similar values in German data
+      status: decided
+
+  - id: one_minus_phi_R
+    symbol: "1 − ϕ_R"
+    section: A
+    meaning: >
+      the same effect restated in model units: derived (not set)
+    code: Calibration.one_minus_phi_R (property)
+    derived: true
+    formula: s_L * one_minus_phi + lam 
+    us_value: 2.86
+    us_source: Equation (40)
+    eu:
+      source_hint: follows from s_L, one_minus_phi and lam; not set directly
+      treatment: derived
+      value: null
+      source: identity in the model, see formula
+      justification: >
+        Derived: s_L x (1 - phi) + lambda = 0.63 x 3.1 + 1 = 2.95 for the EU (2.86 in Antropic).
+        The loader refuses a value here; change the inputs instead.
+      status: decided
+
+  - id: g
+    symbol: "g"
+    section: A
+    meaning: >
+      annual growth of the ideas stock without AI (model units) derived from TFP growth and the labour share
+    code: Calibration.g (property)
+    derived: true
+    formula: g_A / s_L
+    us_value: 0.0167
+    us_source: postwar TFP growth
+    eu:
+      source_hint: follows from g_A and s_L; not set directly
+      treatment: derived
+      value: null
+      source: identity in the model, see formula
+      justification: >
+        Derived: g_A / s_L. With the EU labour share of 0.63 and the EU g_A decided below, the loader
+        computes it. Antropic: 0.010 / 0.60 = 0.0167.
+      status: decided
+
+  - id: g_A
+    symbol: "g_A"
+    section: A
+    group: no-AI trend growth (g_A / s_L + n should match EU potential growth, 1.3-1.4%)
+    meaning: >
+      annual trend growth of measured productivity (TFP) without AI
+    code: Calibration.g_A
+    us_value: 0.010
+    us_source: postwar TFP growth
+    eu:
+      source_hint: null
+      treatment: recalibrate
+      value: 0.008
+      source: >
+        AMECO series of total factor productivity for EU-27. 
+        Average log growth 1995-2024 is 0.77% a year. 
+        The same series and window give the US 1.09%, which is approx Antropic's 0.010. Extract in data/.
+        Source: https://db.nomics.world/AMECO/ZVGDF
+      justification: >
+        Trend TFP growth without AI. This is used for the no-AI baseline and the ideas stock.
+        An important note:
+          - the post-2019 slump is kept: not known whether it is temporary or permanent
+          - leaving it out (1995-2019) gives 0.89%; the slump years alone (2019-2024) give 0.19%
+          - could also use this value as a check
+        Consistency with n: g = 0.008 / 0.63 = 1.27% matching the Commission's 1.3-1.4% EU potential growth (AMECO OVGDP)
+          - leaves about 0.1% for labour-force growth.
+      status: discuss
+
+  - id: n
+    symbol: "n"
+    section: A
+    group: no-AI trend growth (g_A / s_L + n should match EU potential growth, 1.3-1.4%)
+    meaning: >
+      annual growth of the labour force without AI
+    code: Calibration.n
+    us_value: 0.0033
+    us_source: >
+      Set so that GDP grows at 2 percent without AI. The BLS projections put labor-force growth near 0.4
+    eu:
+      source_hint: null
+      treatment: recalibrate
+      value: 0.001
+      source: >
+        GDP without AI grows at g + n. The Commission estimates the EU economy can grow 1.3-1.4% a year
+        We already have g = 1.27% (TFP growth / labour share). Leaves about 0.1% a year for the labour force, so n = 0.001.
+        Check against labour-force data: the EU labour force grew 0.6% a year over 2015-2024 and the
+        Commission forecasts +0.45% a year to 2027 (AMECO NLTN); but the population aged 20-64 is
+        projected to shrink 0.37% a year to 2030 (Eurostat EUROPOP2023) and the 2024 Ageing Report
+        has the labour force falling 0.3% a year in the long run.
+        Sources: https://db.nomics.world/AMECO/OVGDP, https://db.nomics.world/AMECO/NLTN,
+        https://ec.europa.eu/eurostat/databrowser/view/proj_23np
+      justification: >
+        Antropic does the same for the US: pick n so GDP without AI grows 2% a year. 
+        They note that BLS projects labour-force growth of about 0.4%. 
+        Here n is picked so that GDP without AI grows at the Commission's 1.3-1.4%.
+          - n only changes the reported no-AI GDP growth and level
+          - the data checks point in the opposite directions: the labour force has been growing (more
+        people working, migration)
+          - but every projection has the shrinking working-age population winning by 2030
+          - the 0.1% value sits in between
+      status: discuss
+
+  - id: iota_R
+    symbol: "ι_R,t0"
+    section: A
+    meaning: >
+      share of GDP spent on research in 2024
+    code: Calibration.iota_R
+    code_note: >
+      defined in the dataclass but not read by the simulation; it enters only the paper's
+      Appendix C derivation of g
+    us_value: 0.035
+    us_source: R&D share in the national accounts
+    eu:
+      source_hint: null
+      treatment: recalibrate
+      value: 0.023
+      source: >
+        Eurostat R&D expenditure as % of GDP (EU-27 2024): 2.26 (US = 3.44, Antropic's 0.035).
+        Extract in data/. Source: https://ec.europa.eu/eurostat/databrowser/view/rd_e_gerdtot
+      justification: >
+        Documentation only: the simulation never reads this field. Antropic uses it to show that its chosen TFP growth is consistent with the research effort. The EU spends 2.3% of GDP on R&D against 3.4% in the US. Recorded so the EU table is internally consistent, with no effect on results.
+      status: decided
+
+  - id: g_iota
+    symbol: "g_ι"
+    section: A
+    meaning: >
+      trend growth of the research share of GDP, per year (documentation only, not used by the model)
+    code: null
+    code_note: >
+      It documents how g was chosen and is not a model input.
+    us_value: 0.028
+    us_source: Equation (41) in Appendix C
+    eu:
+      source_hint: null
+      treatment: recalibrate
+      value: 0.010
+      source: >
+        Eurostat EU-27 R&D share rose from 1.96% (2010) to 2.26% (2024): 1.0% a
+        year. The US share rose 1.7% a year over the same years (Antropic: 0.028).
+        Source: https://ec.europa.eu/eurostat/databrowser/view/rd_e_gerdtot
+      justification: >
+        Documentation only: not in the code. Antropic uses it to reconcile TFP growth with research effort growth. We take g_A from the data directly. Recorded for completeness; no effect on results.
+      status: decided
+
+  # ---------------------------------------------------------------------------------------------
+  # B. AI in the production of goods and services
+  # ---------------------------------------------------------------------------------------------
+
+  - id: m_anchor
+    symbol: "m_t"
+    section: B
+    meaning: >
+      share of cognitive work that AI can already do at the mid-2026 anchor (the affected mass)
+    code: Calibration.m_anchor
+    us_value: 0.14
+    us_source: observed exposure, averaged over occupations (Massenkoff and McCrory, 2026)
+    eu:
+      source_hint: >
+        This is where European task-content evidence belongs: Cedefop ESJS wave 2 (2021, ~46k
+        workers, digital and task items; Cedefop's AI-exposure work on it), Eurofound EWCS 2021,
+        and the ECB mapping of the Felten / Webb AI-exposure indices to ISCO occupations in Europe.
+      treatment: null
+      value: null
+      source: null
+      justification: null
+      status: open
+
+  - id: m_2030
+    symbol: "m_2030"
+    section: B
+    meaning: >
+      share of cognitive work AI can do by 2030, per scenario
+    code: Scenario.m_2030
+    us_value: {modest: 0.2, substantial: 0.3, extreme: 0.5}
+    us_source: >
+      scenario assumptions: the low end, middle, and near the high end of rated feasibility
+      (Eloundou et al., 2024)
+    eu:
+      source_hint: >
+        Scenario assumption; see m_anchor for the European task-content surveys (Cedefop ESJS,
+        Eurofound EWCS) if an EU-specific feasibility range is wanted.
+      treatment: null
+      value: null
+      source: null
+      justification: null
+      status: open
+
+  - id: m_ceiling
+    symbol: "m̄"
+    section: B
+    meaning: >
+      the most work AI can ever affect: all cognitive work
+    code: Calibration.m_bar (property; Calibration.m_ceiling overrides)
+    derived: true
+    formula: share_C   # all cognitive work
+    us_value: 0.624
+    us_source: all cognitive work
+    eu:
+      source_hint: follows from share_C unless a lower ceiling is wanted
+      treatment: null
+      value: null
+      source: null
+      justification: null
+      status: open
+
+  - id: d_anchor
+    symbol: "d_t"
+    section: B
+    meaning: >
+      share of the affected work where AI is actually in use at the mid-2026 anchor (diffusion)
+    code: Calibration.d_anchor
+    us_value: 0.10
+    us_source: >
+      firm AI use, Business Trends and Outlook Survey and its 2026 AI supplement (U.S. Census
+      Bureau, 2026; Bonney et al., 2026)
+    eu:
+      source_hint: >
+        This is where the US-EU adoption gap belongs. Bick, Blandin, Deming, Fuchs-Schündeln and
+        Jessen (2026), "Mind the Gap: AI Adoption in Europe and the US" (CEPR DP 21337 / St. Louis
+        Fed WP 2026-003): 43% of US workers used genAI at work in early 2026 vs 26-36% in DE, UK,
+        FR, IT, SE, NL; over 95% of the gap is workforce composition plus employer encouragement.
+        Firm-side source: Eurostat ICT usage in enterprises (isoc_eb_ai), share of enterprises
+        using AI, EU-27 vs the US BTOS anchor.
+      treatment: null
+      value: null
+      source: null
+      justification: null
+      status: open
+
+  - id: d_2030
+    symbol: "d_2030"
+    section: B
+    meaning: >
+      share of the affected work where AI is in use by 2030, per scenario
+    code: Scenario.d_2030
+    us_value: {modest: 0.2, substantial: 0.4, extreme: 0.6}
+    us_source: scenario assumptions
+    eu:
+      source_hint: null
+      treatment: null
+      value: null
+      source: null
+      justification: null
+      status: open
+
+  - id: d_ceiling
+    symbol: "d̄"
+    section: B
+    meaning: >
+      the most diffusion can reach: every affected task
+    code: Calibration.d_ceiling
+    us_value: 1
+    us_source: every instance
+    eu:
+      source_hint: null
+      treatment: null
+      value: null
+      source: null
+      justification: null
+      status: open
+
+  - id: a_anchor
+    symbol: "a_t"
+    section: B
+    meaning: >
+      productivity gain where AI is in use, at the anchor, in log points (0.30 is about 35 percent more output per task)
+    code: Scenario.a_anchor
+    us_value: {modest: 0.30, substantial: 0.35, extreme: 0.45}
+    us_source: >
+      scenario assumptions: all-in gains in trials and at the frontier (Brynjolfsson et al., 2025;
+      Huang et al., 2025; Demirer et al., 2026)
+    eu:
+      source_hint: null
+      treatment: null
+      value: null
+      source: null
+      justification: null
+      status: open
+
+  - id: g_a
+    symbol: "g_a"
+    section: B
+    meaning: >
+      yearly increase in that productivity gain, in log points
+    code: Scenario.g_a
+    us_value: {modest: 0, substantial: 0.028, extreme: 0.10}
+    us_source: scenario assumptions which imply a_2030 = 0.30 / 0.45 / 0.80
+    eu:
+      source_hint: null
+      treatment: null
+      value: null
+      source: null
+      justification: null
+      status: open
+
+  # ---------------------------------------------------------------------------------------------
+  # C. Disruptiveness: automation, new tasks, and search once AI arrives
+  # ---------------------------------------------------------------------------------------------
+
+  - id: psi
+    symbol: "ψ_t"
+    section: C
+    meaning: >
+      share of AI use that replaces the worker on the task (automation) rather than assisting them
+    code: Scenario.psi
+    us_value: {modest: 0.50, substantial: 0.75, extreme: 0.90}
+    us_source: >
+      scenario assumptions: on the low end similar to the current automation-like share of use
+      (Appel et al., 2025)
+    eu:
+      source_hint: null
+      treatment: null
+      value: null
+      source: null
+      justification: null
+      status: open
+
+  - id: rho
+    symbol: "ρ"
+    section: C
+    meaning: >
+      share of the displaced work that comes back as new tasks for workers (reinstatement)
+    code: Scenario.rho
+    us_value: {modest: 0.50, substantial: 0.25, extreme: 0}
+    us_source: "scenario assumptions: Acemoglu and Restrepo (2019) estimated rho = 0.5"
+    eu:
+      source_hint: null
+      treatment: null
+      value: null
+      source: null
+      justification: null
+      status: open
+
+  - id: mu
+    symbol: "μ"
+    section: C
+    meaning: >
+      once AI arrives, how effectively an unemployed worker from the other occupation group competes for a job in this group (1 = as well as insiders; lower = harder to switch)
+    code: Scenario.mu
+    us_value: {modest: 0.17, substantial: 0.08, extreme: 0.04}
+    us_source: >
+      scenario assumptions: mu_bar = 0.17 is the value consistent with normal-times occupational
+      switching estimated from CPS
+    eu:
+      source_hint: null
+      treatment: null
+      value: null
+      source: null
+      justification: null
+      status: open
+
+  - id: theta_H
+    symbol: "θ_H"
+    section: C
+    meaning: >
+      speed at which firms post the jobs that AI creates or frees up, per month
+    code: Scenario.theta_H
+    us_value: {modest: 0.10, substantial: 0.25, extreme: 0.50}
+    us_source: scenario assumptions
+    eu:
+      source_hint: null
+      treatment: null
+      value: null
+      source: null
+      justification: null
+      status: open
+
+  - id: xi
+    symbol: "ξ"
+    section: C
+    meaning: >
+      stickiness of the cognitive wage: the fraction of its gap to the market-clearing level that still remains after a year (0.5 = half; higher = stickier)
+    code: Calibration.xi
+    us_value: 0.50
+    us_source: wage-setting evidence (Section 3.4)
+    eu:
+      source_hint: null
+      treatment: null
+      value: null
+      source: null
+      justification: null
+      status: open
+
+  # ---------------------------------------------------------------------------------------------
+  # D. The labor market in normal times
+  # ---------------------------------------------------------------------------------------------
+
+  - id: q_bar_annual
+    symbol: "q̄"
+    section: D
+    meaning: >
+      share of employed workers who quit their job in a normal year
+    code: Calibration.q_bar_annual
+    us_value: 0.11
+    us_source: implied by the pool and the CPS finding rate, rounded (Section 3.2)
+    eu:
+      source_hint: null
+      treatment: null
+      value: null
+      source: null
+      justification: null
+      status: open
+
+  - id: q_T_share
+    symbol: "q^T_o / q̄_o"
+    section: D
+    meaning: >
+      share of those quits that responds to how easy it is to find another job
+    code: Calibration.q_T_share
+    us_value: 0.55
+    us_value_unrounded_note: the code uses 0.06 / 0.11
+    us_source: >
+      elasticity of JOLTS quits to the CPS finding rate (U.S. Bureau of Labor Statistics, 2026a)
+      (Section 3.2)
+    eu:
+      source_hint: null
+      treatment: null
+      value: null
+      source: null
+      justification: null
+      status: open
+
+  - id: sep_rel
+    symbol: "q̄_C / q̄; q̄_N / q̄"
+    section: D
+    meaning: >
+      how much more or less often each group separates into unemployment than the average worker (cognitive, other)
+    code: Calibration.sep_rel (property; from Calibration.hazards, or Calibration.sep_rel_override)
+    us_value: {cognitive: 0.69, other: 1.52}
+    us_value_unrounded_note: >
+      the code derives these from the IPUMS-CPS 2010-19 monthly E-to-U hazards (0.0084, 0.0184)
+      weighted by share_C
+    us_source: IPUMS-CPS 2010-19 (Flood et al., 2025)
+    eu:
+      source_hint: null
+      treatment: null
+      value: null
+      source: null
+      justification: null
+      status: open
+
+  - id: U_bar
+    symbol: "Ū"
+    section: D
+    meaning: >
+      share of the labour force unemployed and searching in normal times (with a previous job)
+    code: Calibration.U_bar
+    us_value: 0.038
+    us_value_unrounded_note: >
+      the code uses CPS 2025 counts, (3158 + 3372) / (101942 + 61551 + 3158 + 3372)
+    us_source: CPS 2025 (U.S. Bureau of Labor Statistics, 2026b)
+    eu:
+      source_hint: null
+      treatment: null
+      value: null
+      source: null
+      justification: null
+      status: open
+
+  - id: mu_bar
+    symbol: "μ̄"
+    section: D
+    meaning: >
+      in normal times, how effectively an unemployed worker competes for jobs in the other occupation group, set to match observed occupational switching
+    code: Calibration.mu_bar
+    us_value: 0.17
+    us_source: >
+      CPS 2010-19 switching matrix from the replication files of Carrillo-Tudela and Visschers
+      (2023b), corrected by their method (Section 3.2)
+    eu:
+      source_hint: null
+      treatment: null
+      value: null
+      source: null
+      justification: null
+      status: open
+
+  - id: iota
+    symbol: "ι"
+    section: D
+    meaning: >
+      shape of the matching function: how sharply the chance of filling a vacancy falls as vacancies outnumber searchers
+    code: Calibration.iota
+    us_value: 1.27
+    us_source: den Haan et al. (2000)
+    eu:
+      source_hint: null
+      treatment: null
+      value: null
+      source: null
+      justification: null
+      status: open
+
+  - id: pi_bar_mean
+    symbol: "π̄_o"
+    section: D
+    meaning: >
+      share of vacancies filled within a month in normal times
+    code: Calibration.pi_bar_mean
+    us_value: 0.65
+    us_source: JOLTS 2010-19, computed using the method of Davis et al. (2013)
+    eu:
+      source_hint: null
+      treatment: null
+      value: null
+      source: null
+      justification: null
+      status: open
