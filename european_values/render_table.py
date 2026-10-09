@@ -21,7 +21,7 @@ import yaml
 HERE = Path(__file__).resolve().parent
 SRC = HERE / "calibration_parameters.yaml"
 SCENARIOS = ("modest", "substantial", "extreme")
-STATUSES = ("decided", "discuss", "draft", "open")
+STATUSES = ("decided", "discuss", "open")
 
 COLUMNS = [
     "Symbol",
@@ -217,6 +217,7 @@ header p { color:var(--muted); margin:0; max-width:900px; }
 .chip .n { color:var(--muted); font-variant-numeric:tabular-nums; }
 .chip.off { opacity:.45; }
 .chip.legend { cursor:default; }
+.chip.on { border-color:var(--accent); background:var(--accent-soft); }
 .spacer { flex:1; }
 input.filter { padding:6px 10px; border:1px solid var(--line-strong); border-radius:8px;
                background:var(--panel); color:var(--fg); min-width:220px; font:inherit; }
@@ -275,6 +276,11 @@ td.treat { text-transform:capitalize; white-space:nowrap; }
 .pill.discuss { background:var(--discuss-soft); color:var(--discuss); }
 .pill.draft { background:var(--draft-soft); color:var(--draft); }
 .pill.open { background:var(--open-soft); color:var(--open); }
+.star { color:var(--accent); font-size:14px; margin-right:4px; }
+.pill.todo { background:var(--accent-soft); color:var(--accent); margin-top:6px; }
+.todo-text { font-size:12px; color:var(--muted); margin-top:3px; }
+.chip.key .star { margin-right:0; }
+tbody tr.key td.code .id { color:var(--accent); }
 tbody tr.discuss td { background:var(--discuss-row) !important; }
 tbody tr.discuss td:first-child { box-shadow:inset 4px 0 0 var(--discuss); }
 tbody tr.grouped td { background:var(--group-row) !important; }
@@ -310,13 +316,21 @@ JS = """
   document.getElementById('collapse').addEventListener('click', function(){ panels.forEach(function(d){ d.open = false; }); });
   document.getElementById('reset').addEventListener('click', function(){ q.value=''; state.q='';
     chips.forEach(function(c){ c.classList.remove('off'); }); state.statuses = {}; save(); apply(); });
+  var todoChip = document.getElementById('todoonly');
+  if (state.todoonly) todoChip.classList.add('on');
+  todoChip.addEventListener('click', function(){ todoChip.classList.toggle('on'); state.todoonly = todoChip.classList.contains('on'); save(); apply(); });
+  var keyChip = document.getElementById('keyonly');
+  if (state.keyonly) keyChip.classList.add('on');
+  keyChip.addEventListener('click', function(){ keyChip.classList.toggle('on'); state.keyonly = keyChip.classList.contains('on'); save(); apply(); });
   function apply(){
+    var keyOnly = keyChip.classList.contains('on');
     var needle = (q.value || '').trim().toLowerCase();
     var on = {}; chips.forEach(function(c){ on[c.dataset.status] = !c.classList.contains('off'); });
     panels.forEach(function(d){
       var shown = 0;
       d.querySelectorAll('tbody tr').forEach(function(tr){
-        var ok = on[tr.dataset.status] !== false && (!needle || tr.textContent.toLowerCase().indexOf(needle) >= 0);
+        var todoOnly = todoChip.classList.contains('on');
+        var ok = on[tr.dataset.status] !== false && (!keyOnly || tr.dataset.key === '1') && (!todoOnly || tr.dataset.todo === '1') && (!needle || tr.textContent.toLowerCase().indexOf(needle) >= 0);
         tr.classList.toggle('hide', !ok); if (ok) shown++;
       });
       d.classList.toggle('allhidden', shown === 0);
@@ -395,7 +409,11 @@ def render_html(spec: dict) -> str:
             f'{st} <span class="n">{totals[st]}</span></span>'
         )
     out += [
-        '<span class="chip legend"><span class="dot" style="background:var(--group-line)"></span>group</span>',
+        '<span class="chip" id="todoonly" title="show only the parameters with an open to-do">to-do '
+        f'<span class="n">{sum(1 for p in spec["parameters"] if p["eu"].get("todo"))}</span></span>',
+        '<span class="chip key" id="keyonly" title="show only the parameters that differ from the US and matter">'
+        '<span class="star">★</span> key EU difference '
+        f'<span class="n">{sum(1 for p in spec["parameters"] if p["eu"].get("key_difference"))}</span></span>',
         '</div><span class="spacer"></span>',
         '<input id="q" class="filter" type="search" placeholder="filter rows (symbol, id, text)">',
         '<button id="expand">Expand all</button><button id="collapse">Collapse all</button>'
@@ -428,7 +446,11 @@ def render_html(spec: dict) -> str:
                     classes.append("group-first")
                 if n == len(plist) - 1 or plist[n + 1].get("group") != grp:
                     classes.append("group-last")
-            out.append(f'<tr class="{e(" ".join(classes))}" data-status="{e(status)}">')
+            key = bool(p["eu"].get("key_difference"))
+            if key:
+                classes.append("key")
+            todo = clean(p["eu"].get("todo"))
+            out.append(f'<tr class="{e(" ".join(classes))}" data-status="{e(status)}" data-key="{int(key)}" data-todo="{int(bool(todo))}">')
             # symbol
             out.append(f'<td class="sym">{_sym(e, cells[0])}</td>')
             # parameter id + code location
@@ -436,7 +458,8 @@ def render_html(spec: dict) -> str:
             derived = '<span class="derived">[derived]</span>' if p.get("derived") else ""
             label = f'<span class="grouplabel">group: {e(grp)}</span>' if grp and "group-first" in classes else ""
             out.append(
-                f'<td class="code"><span class="id">{e(p["id"])}</span>{derived}'
+                f'<td class="code">{"<span class=\"star\" title=\"key EU difference\">★</span>" if key else ""}'
+                f'<span class="id">{e(p["id"])}</span>{derived}'
                 f'<span class="loc">{e(code)}</span>{label}</td>'
             )
             out.append(f'<td class="meaning">{e(cells[2])}</td>')
@@ -446,7 +469,8 @@ def render_html(spec: dict) -> str:
             out.append(f'<td class="num euval">{_num(e, cells[6])}</td>')
             out.append(f'<td class="src">{structure(e, cells[7])}</td>')
             out.append(f'<td class="just">{structure(e, cells[8])}</td>')
-            out.append(f'<td><span class="pill {e(status)}">{e(status)}</span></td>')
+            todo_html = f'<br><span class="pill todo">to-do</span><div class="todo-text">{e(todo)}</div>' if todo else ""
+            out.append(f'<td><span class="pill {e(status)}">{e(status)}</span>{todo_html}</td>')
             out.append("</tr>")
         out.append('</tbody></table></div><div class="empty">No rows match the current filter.</div></details>')
     out.append(

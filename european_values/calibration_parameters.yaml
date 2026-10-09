@@ -36,17 +36,17 @@ parameters:
       how easily tasks substitute for one another in production
     code: Calibration.sigma
     us_value: 0.5
-    us_source: gross complements (Acemoglu and Restrepo, 2022; Humlum, 2019; Jones and Tonetti, 2026)
+    us_source: Acemoglu and Restrep (2022), Humlum (2019), Jones and Tonetti (2026)
     eu:
       source_hint: >
-        Keep the US value which is already based on Humlum (2019) on Danish data
+        Keep the US value which is already based on Humlum (2019) with Danish data
       treatment: retain
       value: 0.5
       source: Antropic Scenario from Acemoglu and Restrepo (2022) and Humlum (2019)
       justification: >
-        Two reasons to keep the same value: 
-        - the Antropic calibration gets this number from Humlum (2019) estimated on Danish microdata.
-        - this is a production technology parameter not an institutional one, so no EU-specific channel.
+        Two reasons to keep the same value:
+          - the Antropic calibration gets this number from Humlum (2019) estimated on Danish microdata
+          - this is a production technology parameter not an institutional one, so no EU-specific channel
       status: decided
 
   - id: s_L
@@ -457,40 +457,62 @@ parameters:
     symbol: "m_t"
     section: B
     meaning: >
-      share of cognitive work that AI can already do at the mid-2026 anchor (the affected mass)
+      share of cognitive work that AI can already do at anchor date (now: mid 2026)
     code: Calibration.m_anchor
     us_value: 0.14
-    us_source: observed exposure, averaged over occupations (Massenkoff and McCrory, 2026)
+    us_source: observed exposure averaged over occupations (Massenkoff and McCrory, 2026)
     eu:
+      key_difference: true
       source_hint: >
-        This is where European task-content evidence belongs: Cedefop ESJS wave 2 (2021, ~46k
-        workers, digital and task items; Cedefop's AI-exposure work on it), Eurofound EWCS 2021,
-        and the ECB mapping of the Felten / Webb AI-exposure indices to ISCO occupations in Europe.
-      treatment: null
-      value: null
-      source: null
-      justification: null
-      status: open
+        Recomputed with EU employment weights from Anthropic observed exposure by occupation.
+        Te same pipeline as m_2030 uses for Eloundou.
+      treatment: recalculate
+      value: 0.12
+      source: >
+        Anthropic Economic Index: labor_market_impacts/job_exposure.csv
+        This is observed exposure by occupation from Massenkoff and McCrory (2026). 
+        We reweight by EU-27 employment (EU LFS, 2025) through the IBS SOC-to-ISCO crosswalk.
+        This yields: US 0.136, EU 0.118, ratio 0.86 that is then applied to Antropic's 0.14.
+        Computed by compute_values/compute_exposure.py.
+        Source: https://huggingface.co/datasets/Anthropic/EconomicIndex
+      justification: >
+        Share of all tasks where AI is observed doing the work (mid-2026).
+        The model uses it as capability, adoption itself is d_anchor.
+        We simply use US occupation scores with EU employment weights. 
+          - the EU value is 14% lower thant the US
+          - mainly because observed exposure is concentrated in programmers, customer-service clerks and business associate professionals
+          - here EU employment is substantially smaller
+      status: decided
 
   - id: m_2030
     symbol: "m_2030"
     section: B
     meaning: >
-      share of cognitive work AI can do by 2030, per scenario
+      share of cognitive work AI can do by 2030 (scenario's)
     code: Scenario.m_2030
     us_value: {modest: 0.2, substantial: 0.3, extreme: 0.5}
     us_source: >
-      scenario assumptions: the low end, middle, and near the high end of rated feasibility
-      (Eloundou et al., 2024)
+      scenario are low end, middle, and near high end of rated feasibility by Eloundou et al. (2024)
     eu:
+      todo: redo with EU-LFS scientific-use microdata (3-digit ISCO) so the within-group mix is European too
+      key_difference: true
       source_hint: >
-        Scenario assumption; see m_anchor for the European task-content surveys (Cedefop ESJS,
-        Eurofound EWCS) if an EU-specific feasibility range is wanted.
-      treatment: null
-      value: null
-      source: null
-      justification: null
-      status: open
+        Not a free scenario assumption. The three values are Eloundou's exposure means on US
+        employment, so the EU version is the same ratings on EU employment.
+      treatment: recalculate
+      value: {modest: 0.18, substantial: 0.29, extreme: 0.48}
+      source: >
+        Eloundou et al. (2024) occupation ratings (github.com/openai/GPTs-are-GPTs) reweighted by
+        EU-27 employment (from LFS, 2025) through the IBS SOC-to-ISCO crosswalk.
+        The EU / US ratios on the human alpha, beta, gamma means: 0.90, 0.95, 0.97, applied to
+        Antropic's 0.2 / 0.3 / 0.5. Inputs in data/, computed by compute_values/compute_exposure.py.
+      justification: >
+        Antropic's three values are the US employment-weighted means of Eloundou's three exposure
+        measures. The ratings describe the technology, only the weights are national. So the EU
+        values are the same ratings on EU employment weights.
+          - the EU is 3-10% lower: more employment in science, teaching and craft occupations, less in business associate professionals, customer-service clerks and sales workers, where exposure is highest.
+          - public EU data stop at 2-digit ISCO, we for now using US within-group weights 
+      status: decided
 
   - id: m_ceiling
     symbol: "m̄"
@@ -499,40 +521,48 @@ parameters:
       the most work AI can ever affect: all cognitive work
     code: Calibration.m_bar (property; Calibration.m_ceiling overrides)
     derived: true
-    formula: share_C   # all cognitive work
+    formula: share_C 
     us_value: 0.624
     us_source: all cognitive work
     eu:
       source_hint: follows from share_C unless a lower ceiling is wanted
-      treatment: null
+      treatment: derived
       value: null
-      source: null
-      justification: null
-      status: open
+      source: identity in the model, see formula
+      justification: >
+        Derived: the ceiling is all cognitive work, so it equals the EU cognitive share, 0.6134
+        (Antropic: 0.624). The code takes it from share_C automatically; a value here would only
+        be needed to impose a lower ceiling, which nothing argues for.
+      status: decided
 
   - id: d_anchor
     symbol: "d_t"
     section: B
     meaning: >
-      share of the affected work where AI is actually in use at the mid-2026 anchor (diffusion)
+      share of affected work where AI is actually in use at anchor data (mid 2026)
     code: Calibration.d_anchor
     us_value: 0.10
     us_source: >
       firm AI use, Business Trends and Outlook Survey and its 2026 AI supplement (U.S. Census
       Bureau, 2026; Bonney et al., 2026)
     eu:
-      source_hint: >
-        This is where the US-EU adoption gap belongs. Bick, Blandin, Deming, Fuchs-Schündeln and
-        Jessen (2026), "Mind the Gap: AI Adoption in Europe and the US" (CEPR DP 21337 / St. Louis
-        Fed WP 2026-003): 43% of US workers used genAI at work in early 2026 vs 26-36% in DE, UK,
-        FR, IT, SE, NL; over 95% of the gap is workforce composition plus employer encouragement.
-        Firm-side source: Eurostat ICT usage in enterprises (isoc_eb_ai), share of enterprises
-        using AI, EU-27 vs the US BTOS anchor.
-      treatment: null
-      value: null
-      source: null
-      justification: null
-      status: open
+      key_difference: true
+      source_hint: Bick et al. (2026) for the US-EU gap; Eurostat isoc_eb_ai for firms.
+      treatment: recalculate
+      value: 0.06
+      source: >
+        JRC AIM-WORK survey (2024/25, ~50,000 EU workers).
+        Measured as: adoption x share of the eight tasks handed off x frequency for cognitive occupations.
+        Computed by compute_values/compute_d_anchor_aimwork.py.
+        Source: https://publications.jrc.ec.europa.eu/repository/handle/JRC143933
+      justification: >
+        d is the share of task instances done with AI. In AIM-WORK we observe hand-off directly.
+        So the EU level is measured and not scaled from the US.
+          - the survey says whether a task is handed off, not how often. We can weighted by how often the
+          tool is to get 0.06. Only weekly users: 0.10. All hand-offs counted fully: 0.15.
+          - cross-check: Antropic's 0.10 x the EU/US firm adoption ratio 0.59 also gives 0.06.
+      todo: replace with the 2026 Sygred update
+      status: discuss
 
   - id: d_2030
     symbol: "d_2030"
