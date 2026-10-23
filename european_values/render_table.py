@@ -1,8 +1,8 @@
-"""Render calibration_parameters.yaml as an HTML table.
+"""Render calibration_parameters.yaml as an HTML table and a Word document.
 
 Run from the repository root:  uv run python european_values/render_table.py
-Writes calibration_parameters.html beside the YAML. The YAML is the source of truth; edit it,
-rerun this, and never edit the output by hand.
+Writes calibration_parameters.html and calibration_parameters.docx (via render_docx.py) beside
+the YAML. The YAML is the source of truth; edit it, rerun this, and never edit the outputs by hand.
 
 The HTML page has one collapsible panel per section of Table 1, a status legend whose chips
 filter the rows, a text filter, and expand / collapse all. Discuss rows are tinted amber
@@ -75,18 +75,17 @@ ENUM = re.compile(r"^(?:\([ivx]+\)|\([a-z]\)|\d{1,2}[.)]|[ivx]+[.)])\s+")
 INLINE_ENUM = re.compile(r"\s+(?=\([ivx]+\)\s)")
 
 
-def structure(e, text: str, link: bool = True) -> str:
-    """Turn the YAML text into HTML blocks.
+def parse_blocks(text: str) -> list[tuple[str, str]]:
+    """The YAML text as (kind, text) blocks, kind in p (paragraph), li (bullet), en (enumerated
+    item), br (blank line).
 
     A line starting with "- ", "* " or "+ " is a bullet; one starting with "(i)", "(a)", "1." or
     "1)" is an enumerated item with a hanging indent. YAML has already folded wrapped lines of a
     ">" or plain scalar into one line, so any newline that survives was a blank line in the YAML:
     it starts a new paragraph. An indented plain line after a bullet or item continues that item.
+    Shared by the HTML and the Word renderers.
     """
-    if not text:
-        return ""
-    conv = (lambda t: _linkify(e, t)) if link else e
-    blocks: list[tuple[str, str]] = []  # (kind, text) with kind in p, li, en, br
+    blocks: list[tuple[str, str]] = []
     last_indent = 0
     for raw in text.split("\n"):
         line = raw.strip()
@@ -116,7 +115,15 @@ def structure(e, text: str, link: bool = True) -> str:
                 split.extend(("en", r.strip()) for r in rest)
                 continue
         split.append((kind, t))
-    blocks = split
+    return split
+
+
+def structure(e, text: str, link: bool = True) -> str:
+    """Turn the YAML text into HTML blocks (see parse_blocks)."""
+    if not text:
+        return ""
+    conv = (lambda t: _linkify(e, t)) if link else e
+    blocks = parse_blocks(text)
     parts: list[str] = []
     i = 0
     while i < len(blocks):
@@ -511,6 +518,10 @@ def main() -> None:
     spec = yaml.safe_load(SRC.read_text(encoding="utf-8"))
     (HERE / "calibration_parameters.html").write_text(render_html(spec), encoding="utf-8")
     print(f"wrote calibration_parameters.html, {len(spec['parameters'])} parameters")
+    from render_docx import write_docx  # noqa: PLC0415  (kept separate: needs python-docx)
+
+    write_docx(spec, HERE / "calibration_parameters.docx")
+    print("wrote calibration_parameters.docx")
 
 
 if __name__ == "__main__":

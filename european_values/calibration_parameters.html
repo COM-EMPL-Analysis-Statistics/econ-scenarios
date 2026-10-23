@@ -140,8 +140,8 @@ footer { color:var(--muted); font-size:12px; margin-top:18px; }
 <header><h1>Calibration parameters: US values and EU treatment</h1>
 <p>Generated from <code>calibration_parameters.yaml</code>. Please edit the YAML and rerun <code>render_table.py</code> to update this table. The estimated model imports parameters directly from that YAML.</p></header>
 <div class="toolbar"><div class="chips">
-<span class="chip" data-status="decided" title="click to hide or show these rows"><span class="dot" style="background:var(--decided)"></span>decided <span class="n">25</span></span>
-<span class="chip" data-status="discuss" title="click to hide or show these rows"><span class="dot" style="background:var(--discuss)"></span>discuss <span class="n">11</span></span>
+<span class="chip" data-status="decided" title="click to hide or show these rows"><span class="dot" style="background:var(--decided)"></span>decided <span class="n">23</span></span>
+<span class="chip" data-status="discuss" title="click to hide or show these rows"><span class="dot" style="background:var(--discuss)"></span>discuss <span class="n">13</span></span>
 <span class="chip" data-status="open" title="click to hide or show these rows"><span class="dot" style="background:var(--open)"></span>open <span class="n">0</span></span>
 <span class="chip" id="todoonly" title="show only the parameters with an open to-do">to-do <span class="n">2</span></span>
 <span class="chip key" id="keyonly" title="show only the key differences: where our EU reading departs from Antropic by judgement"><span class="star">★</span> key difference <span class="n">7</span></span>
@@ -320,7 +320,7 @@ footer { color:var(--muted); font-size:12px; margin-top:18px; }
 <td><span class="pill discuss">discuss</span></td>
 </tr>
 </tbody></table></div><div class="empty">No rows match the current filter.</div></details>
-<details class="panel" open data-sec="B"><summary><span class="letter">B</span><span class="title">AI in the production of goods and services</span><span class="meta"><span class="shown">8</span> of 8 parameters</span><span class="mini"><span class="pill decided" title="decided">6</span><span class="pill discuss" title="discuss">2</span></span><span class="chev">&#9656;</span></summary>
+<details class="panel" open data-sec="B"><summary><span class="letter">B</span><span class="title">AI in the production of goods and services</span><span class="meta"><span class="shown">8</span> of 8 parameters</span><span class="mini"><span class="pill decided" title="decided">4</span><span class="pill discuss" title="discuss">4</span></span><span class="chev">&#9656;</span></summary>
 <div class="wrap"><table><colgroup><col style="width:10%"><col style="width:9%"><col style="width:6%"><col style="width:10%"><col style="width:7%"><col style="width:19%"><col style="width:32%"><col style="width:7%"></colgroup><thead><tr>
 <th>Parameter</th>
 <th>Meaning</th>
@@ -331,7 +331,7 @@ footer { color:var(--muted); font-size:12px; margin-top:18px; }
 <th class="just">Justification</th>
 <th>Status</th>
 </tr></thead><tbody>
-<tr class="decided key" data-status="decided" data-key="1" data-todo="0">
+<tr class="discuss key" data-status="discuss" data-key="1" data-todo="0">
 <td class="code"><span class="sym"><span class="star" title="key difference">★</span><i>m</i><sub>t</sub></span><span class="id">m_anchor</span><span class="loc">Calibration.m_anchor</span></td>
 <td class="meaning">share of cognitive work that AI can already do at anchor date (now: mid 2026)</td>
 <td class="num">0.14</td>
@@ -339,9 +339,9 @@ footer { color:var(--muted); font-size:12px; margin-top:18px; }
 <td class="num euval">0.12<br><span class="treat recalculate">recalculate</span></td>
 <td class="src"><p>This is observed exposure by occupation from Massenkoff and McCrory (2026). We reweight by EU-27 employment at 3-digit ISCO (EU-LFS microdata 2024, data/eulfs_employment_isco3d_2024.csv) through the IBS SOC-to-ISCO crosswalk. This yields 0.122 for the EU: 89% of the US value computed the same way (0.137). So we compute the value as 0.14 x 0.89 = 0.12. Computed by compute_values/compute_exposure.py. Source: <a href="https://huggingface.co/datasets/Anthropic/EconomicIndex" target="_blank" rel="noopener">https://huggingface.co/datasets/Anthropic/EconomicIndex</a></p></td>
 <td class="just"><p>Share of all tasks where AI is observed doing the work (mid-2026). The model uses it as capability, adoption itself is d_anchor. We simply use US occupation scores with EU employment weights:</p><ul><li>yields a slightly lower value than the US (0.122 against 0.137)</li><li>mainly because observed exposure is concentrated in programmers, customer-service clerks and business associate professionals where EU is smaller</li></ul></td>
-<td><span class="pill decided">decided</span></td>
+<td><span class="pill discuss">discuss</span></td>
 </tr>
-<tr class="decided key" data-status="decided" data-key="1" data-todo="0">
+<tr class="discuss key" data-status="discuss" data-key="1" data-todo="0">
 <td class="code"><span class="sym"><span class="star" title="key difference">★</span><i>m</i><sub>2030</sub></span><span class="id">m_2030</span><span class="loc">Scenario.m_2030</span></td>
 <td class="meaning">share of cognitive work AI can do by 2030 (per scenario)</td>
 <td class="num">0.2 / 0.3 / 0.5<span class="mse">modest / substantial / extreme</span></td>
@@ -349,7 +349,7 @@ footer { color:var(--muted); font-size:12px; margin-top:18px; }
 <td class="num euval">0.18 / 0.28 / 0.48<span class="mse">modest / substantial / extreme</span><br><span class="treat recalculate">recalculate</span></td>
 <td class="src"><p>Eloundou et al. (2024) three exposure measures averaged over occupations with EU instead of US employment weights (3-digit ISCO, EU-LFS microdata 2024). Comes out to 0.89, 0.94 and 0.96 of the US means. Rescaling Antropic&#x27;s 0.2 / 0.3 / 0.5 gives 0.18 / 0.28 / 0.48. Inputs in data/, computed by compute_values/compute_exposure.py.</p><p>Source: <a href="https://github.com/openai/GPTs-are-GPTs/blob/main/data/occ_level.csv" target="_blank" rel="noopener">https://github.com/openai/GPTs-are-GPTs/blob/main/data/occ_level.csv</a></p></td>
 <td class="just"><p>Antropic&#x27;s values are the US employment-weighted means of Eloundou&#x27;s three exposure measures. The ratings describe the technology, only the weights are national, so we simply use EU employment weights instead:</p><ul><li>the EU is 4-11% lower: more employment in science, teaching and craft occupations, less in business associate professionals, customer-service clerks and sales workers, where exposure is highest.</li></ul></td>
-<td><span class="pill decided">decided</span></td>
+<td><span class="pill discuss">discuss</span></td>
 </tr>
 <tr class="decided" data-status="decided" data-key="0" data-todo="0">
 <td class="code"><span class="sym"><i>m̄</i></span><span class="id">m_ceiling</span><span class="derived">[derived]</span><span class="loc">Calibration.m_bar</span></td>

@@ -409,7 +409,7 @@ parameters:
         We simply use US occupation scores with EU employment weights:
           - yields a slightly lower value than the US (0.122 against 0.137)
           - mainly because observed exposure is concentrated in programmers, customer-service clerks and business associate professionals where EU is smaller
-      status: decided
+      status: discuss
 
   - id: m_2030
     symbol: "m_2030"
@@ -434,7 +434,7 @@ parameters:
       justification: >
         Antropic's values are the US employment-weighted means of Eloundou's three exposure measures. The ratings describe the technology, only the weights are national, so we simply use EU employment weights instead:
           - the EU is 4-11% lower: more employment in science, teaching and craft occupations, less in business associate professionals, customer-service clerks and sales workers, where exposure is highest.
-      status: decided
+      status: discuss
 
   - id: m_ceiling
     symbol: "m̄"
