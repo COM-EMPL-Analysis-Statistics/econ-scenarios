@@ -1,0 +1,7 @@
+# Posting speed theta_H (share of the hiring gap firms post per month), same value in every
+# scenario. Antropic's rungs are 0.10 / 0.25 / 0.50.
+name: theta_H sweep
+description: posting speed at 0.05, 0.10, 0.25, 0.50 and 1.0 applied to all three scenarios
+base: eu
+sweep:
+  theta_H: [0.05, 0.10, 0.25, 0.50, 1.0]

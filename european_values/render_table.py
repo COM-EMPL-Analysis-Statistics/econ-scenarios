@@ -13,10 +13,13 @@ from __future__ import annotations
 
 import html
 import re
-import re
+import sys
 from pathlib import Path
 
 import yaml
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from load_params import _field_name, load  # noqa: E402
 
 HERE = Path(__file__).resolve().parent
 SRC = HERE / "calibration_parameters.yaml"
@@ -24,12 +27,10 @@ SCENARIOS = ("modest", "substantial", "extreme")
 STATUSES = ("decided", "discuss", "open")
 
 COLUMNS = [
-    "Symbol",
-    "Parameter (code)",
+    "Parameter",
     "Meaning",
     "US value",
     "US source",
-    "EU treatment",
     "EU value",
     "EU source / hint",
     "Justification",
@@ -37,14 +38,21 @@ COLUMNS = [
 ]
 
 
+def _round(v) -> str:
+    """A number at most three decimals; other values as they are."""
+    if isinstance(v, float):
+        return f"{round(v, 3):g}"
+    return str(v)
+
+
 def fmt_value(v) -> str:
     if v is None:
         return ""
     if isinstance(v, dict):
         if set(v) == set(SCENARIOS):
-            return " / ".join(str(v[s]) for s in SCENARIOS) + " (M / S / E)"
-        return "; ".join(f"{k} {val}" for k, val in v.items())
-    return str(v)
+            return " / ".join(_round(v[s]) for s in SCENARIOS) + " (M / S / E)"
+        return "; ".join(f"{k} {_round(val)}" for k, val in v.items())
+    return _round(v)
 
 
 def clean(s) -> str:
@@ -71,9 +79,9 @@ def structure(e, text: str, link: bool = True) -> str:
     """Turn the YAML text into HTML blocks.
 
     A line starting with "- ", "* " or "+ " is a bullet; one starting with "(i)", "(a)", "1." or
-    "1)" is an enumerated item with a hanging indent; a blank line separates paragraphs. A plain
-    line after another plain line continues that paragraph; after a bullet or item, it continues
-    that bullet or item (so block scalars written with | reflow like folded ones written with >).
+    "1)" is an enumerated item with a hanging indent. YAML has already folded wrapped lines of a
+    ">" or plain scalar into one line, so any newline that survives was a blank line in the YAML:
+    it starts a new paragraph. An indented plain line after a bullet or item continues that item.
     """
     if not text:
         return ""
@@ -91,8 +99,6 @@ def structure(e, text: str, link: bool = True) -> str:
         elif ENUM.match(line):
             blocks.append(("en", line))
             last_indent = indent
-        elif blocks and blocks[-1][0] == "p":
-            blocks[-1] = ("p", blocks[-1][1] + " " + line)  # a wrapped line continues its paragraph
         elif blocks and blocks[-1][0] in ("li", "en") and indent > last_indent:
             blocks[-1] = (blocks[-1][0], blocks[-1][1] + " " + line)  # indented: continues the item
         else:
@@ -136,8 +142,22 @@ def code_cell(p: dict) -> str:
     return f"{p['id']}{tag}\n{code}"
 
 
+_EU_CAL = None
+
+
+def derived_value(p: dict):
+    """The EU value of a derived parameter, read off the loaded EU calibration."""
+    global _EU_CAL
+    if _EU_CAL is None:
+        _EU_CAL, _ = load("eu")
+    return getattr(_EU_CAL, _field_name(p["code"]))
+
+
 def rows_for(p: dict) -> list[str]:
     eu = p["eu"]
+    value = eu.get("value")
+    if value is None and p.get("derived") and p.get("code"):
+        value = derived_value(p)
     return [
         clean(p.get("symbol")),
         code_cell(p),
@@ -145,7 +165,7 @@ def rows_for(p: dict) -> list[str]:
         fmt_value(p.get("us_value")),
         clean(p.get("us_source")),
         clean(eu.get("treatment")),
-        fmt_value(eu.get("value")),
+        fmt_value(value),
         clean(eu.get("source")) or clean(eu.get("source_hint")),
         clean(eu.get("justification")),
         clean(eu.get("status")) or "open",
@@ -205,7 +225,7 @@ CSS = """
 html { background:var(--bg); }
 body { margin:0; padding:28px 48px 56px; background:var(--bg); color:var(--fg);
        font:14px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
-.page { max-width:1680px; margin:0 auto; }
+.page { max-width:1840px; margin:0 auto; }
 header h1 { font-size:22px; font-weight:650; letter-spacing:-.01em; margin:0 0 4px; }
 header p { color:var(--muted); margin:0; max-width:900px; }
 .toolbar { display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin:18px 0 14px; }
@@ -249,17 +269,24 @@ td:first-child, th:first-child { padding-left:14px; }
 td:last-child, th:last-child { padding-right:14px; }
 tbody tr:nth-child(even) td { background:var(--zebra); }
 tbody tr.hide { display:none; }
-td.sym { font-family:"Cambria Math", Cambria, "Times New Roman", Georgia, serif; font-size:16px; }
-td.sym i { font-style:italic; }
-td.sym sub, td.sym sup { font-size:11px; font-style:italic; line-height:0; }
+td.code .sym { display:block; font-family:"Cambria Math", Cambria, "Times New Roman", Georgia, serif;
+               font-size:17px; margin-bottom:3px; }
+td.code .sym i { font-style:italic; }
+td.code .sym sub, td.code .sym sup { font-size:11px; font-style:italic; line-height:0; }
 td.code { font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size:12px;
           white-space:pre-wrap; }
 td.code .id { font-weight:600; font-size:13px; }
-td.code .loc { color:var(--muted); display:block; margin-top:2px; }
+td.code .loc { color:var(--muted); display:block; margin-top:2px; font-size:10px; }
 td.code .derived { color:var(--accent); font-size:11px; margin-left:4px; }
 td.num { font-variant-numeric:tabular-nums; }
 td.num .mse { display:block; font-size:11px; color:var(--muted); font-weight:400; margin-top:2px; }
 td.euval { font-weight:600; }
+td.euval .treat { display:inline-block; margin-top:5px; padding:1px 7px; border-radius:999px; font-size:10px;
+                  font-weight:600; text-transform:capitalize; white-space:nowrap;
+                  background:var(--accent-soft); color:var(--muted); }
+td.euval .treat.retain { background:var(--decided-soft); color:var(--decided); }
+td.euval .treat.recalculate { background:var(--discuss-soft); color:var(--discuss); }
+td.euval .treat.recalibrate { background:var(--open-soft); color:var(--open); }
 td { overflow-wrap:anywhere; }
 td p, td ul, td .en { margin:0; }
 td p + p, td ul + p, td .en + p, td p + ul, td .en + ul, td ul + .en, td p + .en { margin-top:6px; }
@@ -269,7 +296,6 @@ td li + li { margin-top:3px; }
 td .en { padding-left:1.9em; text-indent:-1.9em; }
 td .en + .en { margin-top:4px; }
 td.src a { color:var(--accent); word-break:break-all; }
-td.treat { text-transform:capitalize; white-space:nowrap; }
 .pill { display:inline-block; padding:2px 8px; border-radius:999px; font-size:11px; font-weight:600;
         text-transform:capitalize; white-space:nowrap; }
 .pill.decided { background:var(--decided-soft); color:var(--decided); }
@@ -394,6 +420,11 @@ def render_html(spec: dict) -> str:
         '<html lang="en"><head><meta charset="utf-8">',
         '<meta name="viewport" content="width=device-width, initial-scale=1">',
         "<title>Calibration parameters</title>",
+        '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.11/katex.min.css">',
+        '<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.11/katex.min.js"></script>',
+        '<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.11/contrib/auto-render.min.js" '
+        "onload=\"renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},"
+        "{left:'$',right:'$',display:false}],throwOnError:false})\"></script>",
         f"<style>{CSS}</style></head><body><div class=\"page\">",
         "<header><h1>Calibration parameters: US values and EU treatment</h1>",
         "<p>Generated from <code>calibration_parameters.yaml</code>. "
@@ -411,8 +442,8 @@ def render_html(spec: dict) -> str:
     out += [
         '<span class="chip" id="todoonly" title="show only the parameters with an open to-do">to-do '
         f'<span class="n">{sum(1 for p in spec["parameters"] if p["eu"].get("todo"))}</span></span>',
-        '<span class="chip key" id="keyonly" title="show only the parameters that differ from the US and matter">'
-        '<span class="star">★</span> key EU difference '
+        '<span class="chip key" id="keyonly" title="show only the key differences: where our EU reading departs from Antropic by judgement">'
+        '<span class="star">★</span> key difference '
         f'<span class="n">{sum(1 for p in spec["parameters"] if p["eu"].get("key_difference"))}</span></span>',
         '</div><span class="spacer"></span>',
         '<input id="q" class="filter" type="search" placeholder="filter rows (symbol, id, text)">',
@@ -431,7 +462,7 @@ def render_html(spec: dict) -> str:
             f'<span class="meta"><span class="shown">{len(plist)}</span> of {len(plist)} parameters</span>'
             f'<span class="mini">{mini}</span><span class="chev">&#9656;</span></summary>'
         )
-        widths = (6, 11, 8, 6, 10, 6, 6, 12, 28, 7)
+        widths = (10, 9, 6, 10, 7, 19, 32, 7)
         out.append('<div class="wrap"><table><colgroup>' + "".join(f'<col style="width:{w}%">' for w in widths) + "</colgroup><thead><tr>")
         out += [f'<th{" class=\"just\"" if c == "Justification" else ""}>{e(c)}</th>' for c in COLUMNS]
         out.append("</tr></thead><tbody>")
@@ -451,33 +482,27 @@ def render_html(spec: dict) -> str:
                 classes.append("key")
             todo = clean(p["eu"].get("todo"))
             out.append(f'<tr class="{e(" ".join(classes))}" data-status="{e(status)}" data-key="{int(key)}" data-todo="{int(bool(todo))}">')
-            # symbol
-            out.append(f'<td class="sym">{_sym(e, cells[0])}</td>')
-            # parameter id + code location
-            code = clean(p.get("code")) or "not in code"
+            # symbol, parameter id and code location in one cell
+            code = (clean(p.get("code")) or "not in code").split(" (")[0]  # drop the bracketed note
             derived = '<span class="derived">[derived]</span>' if p.get("derived") else ""
             label = f'<span class="grouplabel">group: {e(grp)}</span>' if grp and "group-first" in classes else ""
             out.append(
-                f'<td class="code">{"<span class=\"star\" title=\"key EU difference\">★</span>" if key else ""}'
+                f'<td class="code"><span class="sym">'
+                f'{"<span class=\"star\" title=\"key difference\">★</span>" if key else ""}{_sym(e, cells[0])}</span>'
                 f'<span class="id">{e(p["id"])}</span>{derived}'
                 f'<span class="loc">{e(code)}</span>{label}</td>'
             )
             out.append(f'<td class="meaning">{e(cells[2])}</td>')
             out.append(f'<td class="num">{_num(e, cells[3])}</td>')
             out.append(f'<td class="src">{structure(e, cells[4])}</td>')
-            out.append(f'<td class="treat">{e(cells[5])}</td>')
-            out.append(f'<td class="num euval">{_num(e, cells[6])}</td>')
+            treat = f'<br><span class="treat {e(cells[5].split()[0])}">{e(cells[5])}</span>' if cells[5] else ""
+            out.append(f'<td class="num euval">{_num(e, cells[6])}{treat}</td>')
             out.append(f'<td class="src">{structure(e, cells[7])}</td>')
             out.append(f'<td class="just">{structure(e, cells[8])}</td>')
             todo_html = f'<br><span class="pill todo">to-do</span><div class="todo-text">{e(todo)}</div>' if todo else ""
             out.append(f'<td><span class="pill {e(status)}">{e(status)}</span>{todo_html}</td>')
             out.append("</tr>")
         out.append('</tbody></table></div><div class="empty">No rows match the current filter.</div></details>')
-    out.append(
-        f"<footer>{len(spec['parameters'])} parameters. "
-        + ", ".join(f"{totals[st]} {st}" for st in STATUSES)
-        + ". Collapsed panels and filters are remembered in this browser.</footer>"
-    )
     out.append(f"</div><script>{JS}</script></body></html>\n")
     return "\n".join(out)
 

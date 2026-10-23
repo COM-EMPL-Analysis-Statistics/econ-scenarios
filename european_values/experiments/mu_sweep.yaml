@@ -1,0 +1,7 @@
+# Search discount mu once AI arrives, same value in every scenario. Antropic's rungs are
+# 0.17 (= mu_bar, 3 months of retraining) / 0.08 (6 months) / 0.04 (13 months).
+name: mu sweep
+description: search discount at 0.02, 0.04, 0.08, 0.17 and 0.34 applied to all three scenarios
+base: eu
+sweep:
+  mu: [0.02, 0.04, 0.08, 0.17, 0.34]

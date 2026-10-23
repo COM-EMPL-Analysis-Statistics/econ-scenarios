@@ -2,6 +2,9 @@
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Calibration parameters</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.11/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.11/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.11/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false})"></script>
 <style>
 :root {
   --bg:#f6f7f9; --panel:#ffffff; --fg:#1c1f24; --muted:#5f6670; --line:#e3e6ea; --line-strong:#c9ced5;
@@ -37,7 +40,7 @@
 html { background:var(--bg); }
 body { margin:0; padding:28px 48px 56px; background:var(--bg); color:var(--fg);
        font:14px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
-.page { max-width:1680px; margin:0 auto; }
+.page { max-width:1840px; margin:0 auto; }
 header h1 { font-size:22px; font-weight:650; letter-spacing:-.01em; margin:0 0 4px; }
 header p { color:var(--muted); margin:0; max-width:900px; }
 .toolbar { display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin:18px 0 14px; }
@@ -81,17 +84,24 @@ td:first-child, th:first-child { padding-left:14px; }
 td:last-child, th:last-child { padding-right:14px; }
 tbody tr:nth-child(even) td { background:var(--zebra); }
 tbody tr.hide { display:none; }
-td.sym { font-family:"Cambria Math", Cambria, "Times New Roman", Georgia, serif; font-size:16px; }
-td.sym i { font-style:italic; }
-td.sym sub, td.sym sup { font-size:11px; font-style:italic; line-height:0; }
+td.code .sym { display:block; font-family:"Cambria Math", Cambria, "Times New Roman", Georgia, serif;
+               font-size:17px; margin-bottom:3px; }
+td.code .sym i { font-style:italic; }
+td.code .sym sub, td.code .sym sup { font-size:11px; font-style:italic; line-height:0; }
 td.code { font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size:12px;
           white-space:pre-wrap; }
 td.code .id { font-weight:600; font-size:13px; }
-td.code .loc { color:var(--muted); display:block; margin-top:2px; }
+td.code .loc { color:var(--muted); display:block; margin-top:2px; font-size:10px; }
 td.code .derived { color:var(--accent); font-size:11px; margin-left:4px; }
 td.num { font-variant-numeric:tabular-nums; }
 td.num .mse { display:block; font-size:11px; color:var(--muted); font-weight:400; margin-top:2px; }
 td.euval { font-weight:600; }
+td.euval .treat { display:inline-block; margin-top:5px; padding:1px 7px; border-radius:999px; font-size:10px;
+                  font-weight:600; text-transform:capitalize; white-space:nowrap;
+                  background:var(--accent-soft); color:var(--muted); }
+td.euval .treat.retain { background:var(--decided-soft); color:var(--decided); }
+td.euval .treat.recalculate { background:var(--discuss-soft); color:var(--discuss); }
+td.euval .treat.recalibrate { background:var(--open-soft); color:var(--open); }
 td { overflow-wrap:anywhere; }
 td p, td ul, td .en { margin:0; }
 td p + p, td ul + p, td .en + p, td p + ul, td .en + ul, td ul + .en, td p + .en { margin-top:6px; }
@@ -101,7 +111,6 @@ td li + li { margin-top:3px; }
 td .en { padding-left:1.9em; text-indent:-1.9em; }
 td .en + .en { margin-top:4px; }
 td.src a { color:var(--accent); word-break:break-all; }
-td.treat { text-transform:capitalize; white-space:nowrap; }
 .pill { display:inline-block; padding:2px 8px; border-radius:999px; font-size:11px; font-weight:600;
         text-transform:capitalize; white-space:nowrap; }
 .pill.decided { background:var(--decided-soft); color:var(--decided); }
@@ -131,527 +140,422 @@ footer { color:var(--muted); font-size:12px; margin-top:18px; }
 <header><h1>Calibration parameters: US values and EU treatment</h1>
 <p>Generated from <code>calibration_parameters.yaml</code>. Please edit the YAML and rerun <code>render_table.py</code> to update this table. The estimated model imports parameters directly from that YAML.</p></header>
 <div class="toolbar"><div class="chips">
-<span class="chip" data-status="decided" title="click to hide or show these rows"><span class="dot" style="background:var(--decided)"></span>decided <span class="n">18</span></span>
-<span class="chip" data-status="discuss" title="click to hide or show these rows"><span class="dot" style="background:var(--discuss)"></span>discuss <span class="n">4</span></span>
-<span class="chip" data-status="open" title="click to hide or show these rows"><span class="dot" style="background:var(--open)"></span>open <span class="n">16</span></span>
+<span class="chip" data-status="decided" title="click to hide or show these rows"><span class="dot" style="background:var(--decided)"></span>decided <span class="n">25</span></span>
+<span class="chip" data-status="discuss" title="click to hide or show these rows"><span class="dot" style="background:var(--discuss)"></span>discuss <span class="n">11</span></span>
+<span class="chip" data-status="open" title="click to hide or show these rows"><span class="dot" style="background:var(--open)"></span>open <span class="n">0</span></span>
 <span class="chip" id="todoonly" title="show only the parameters with an open to-do">to-do <span class="n">2</span></span>
-<span class="chip key" id="keyonly" title="show only the parameters that differ from the US and matter"><span class="star">★</span> key EU difference <span class="n">3</span></span>
+<span class="chip key" id="keyonly" title="show only the key differences: where our EU reading departs from Antropic by judgement"><span class="star">★</span> key difference <span class="n">7</span></span>
 </div><span class="spacer"></span>
 <input id="q" class="filter" type="search" placeholder="filter rows (symbol, id, text)">
 <button id="expand">Expand all</button><button id="collapse">Collapse all</button><button id="reset">Reset</button></div>
-<details class="panel" open data-sec="A"><summary><span class="letter">A</span><span class="title">Technology, factor markets, and ideas production</span><span class="meta"><span class="shown">18</span> of 18 parameters</span><span class="mini"><span class="pill decided" title="decided">15</span><span class="pill discuss" title="discuss">3</span></span><span class="chev">&#9656;</span></summary>
-<div class="wrap"><table><colgroup><col style="width:6%"><col style="width:11%"><col style="width:8%"><col style="width:6%"><col style="width:10%"><col style="width:6%"><col style="width:6%"><col style="width:12%"><col style="width:28%"><col style="width:7%"></colgroup><thead><tr>
-<th>Symbol</th>
-<th>Parameter (code)</th>
+<details class="panel" open data-sec="A"><summary><span class="letter">A</span><span class="title">Technology, factor markets, and ideas production</span><span class="meta"><span class="shown">16</span> of 16 parameters</span><span class="mini"><span class="pill decided" title="decided">13</span><span class="pill discuss" title="discuss">3</span></span><span class="chev">&#9656;</span></summary>
+<div class="wrap"><table><colgroup><col style="width:10%"><col style="width:9%"><col style="width:6%"><col style="width:10%"><col style="width:7%"><col style="width:19%"><col style="width:32%"><col style="width:7%"></colgroup><thead><tr>
+<th>Parameter</th>
 <th>Meaning</th>
 <th>US value</th>
 <th>US source</th>
-<th>EU treatment</th>
 <th>EU value</th>
 <th>EU source / hint</th>
 <th class="just">Justification</th>
 <th>Status</th>
 </tr></thead><tbody>
 <tr class="decided" data-status="decided" data-key="0" data-todo="0">
-<td class="sym"><i>σ</i></td>
-<td class="code"><span class="id">sigma</span><span class="loc">Calibration.sigma</span></td>
+<td class="code"><span class="sym"><i>σ</i></span><span class="id">sigma</span><span class="loc">Calibration.sigma</span></td>
 <td class="meaning">how easily tasks substitute for one another in production</td>
 <td class="num">0.5</td>
-<td class="src"><p>Acemoglu and Restrep (2022), Humlum (2019), Jones and Tonetti (2026)</p></td>
-<td class="treat">retain</td>
-<td class="num euval">0.5</td>
-<td class="src"><p>Antropic Scenario from Acemoglu and Restrepo (2022) and Humlum (2019)</p></td>
-<td class="just"><p>Two reasons to keep the same value:</p><ul><li>the Antropic calibration gets this number from Humlum (2019) estimated on Danish microdata</li><li>this is a production technology parameter not an institutional one, so no EU-specific channel</li></ul></td>
+<td class="src"><p>Acemoglu and Restrepo (2022), Humlum (2019), Jones and Tonetti (2026)</p></td>
+<td class="num euval">0.5<br><span class="treat retain">retain</span></td>
+<td class="src"><p>The value is already based on Humlum (2019) with Danish data</p></td>
+<td class="just"><p>Two reasons to keep the same value:</p><ul><li>the Antropic calibration gets this number from Humlum (2019) estimated on Danish microdata</li><li>this is a production technology parameter with limited institutional content</li></ul></td>
 <td><span class="pill decided">decided</span></td>
 </tr>
 <tr class="decided" data-status="decided" data-key="0" data-todo="0">
-<td class="sym"><i>s</i><sub>L,t0</sub></td>
-<td class="code"><span class="id">s_L</span><span class="loc">Calibration.s_L</span></td>
-<td class="meaning">share of output paid to labour in the base year (rest goes to capital)</td>
+<td class="code"><span class="sym"><i>s</i><sub>L,t0</sub></span><span class="id">s_L</span><span class="loc">Calibration.s_L</span></td>
+<td class="meaning">share of output paid to labour in the base year (rest to capital)</td>
 <td class="num">0.6</td>
-<td class="src"><p>conventional value for the U.S.</p></td>
-<td class="treat">recalibrate</td>
-<td class="num euval">0.63</td>
-<td class="src"><p>AMECO series of the adjusted wage share as a percentage of GDP at current factor cost. The same series gives the US 60.5 for 2015-19, which is approx the 0.60 value of Antropic. Source: <a href="https://db.nomics.world/AMECO/ALCD2" target="_blank" rel="noopener">https://db.nomics.world/AMECO/ALCD2</a>.</p></td>
-<td class="just"><p>The value of 0.60 that Antropic uses matches the adjusted labour share at factor cost (self-employed income imputed to labour, indirect taxes excluded). The EU-27 value of this concept has been roughly stable at 0.63 since 2010.</p></td>
+<td class="src"><p>Conventional value for the US</p></td>
+<td class="num euval">0.63<br><span class="treat recalibrate">recalibrate</span></td>
+<td class="src"><p>AMECO series of the adjusted wage share as a percentage of GDP at current factor cost. The same series gives the US 60.5 for 2015-19, approx the 0.60 value of Antropic. Source: <a href="https://db.nomics.world/AMECO/ALCD2" target="_blank" rel="noopener">https://db.nomics.world/AMECO/ALCD2</a>.</p></td>
+<td class="just"><p>There are different ways to define the labor share. The value that Antropic uses matches the adjusted labour share at factor cost (self-employed income imputed to labour, indirect taxes excluded). The EU value has been roughly stable at 0.63.</p></td>
 <td><span class="pill decided">decided</span></td>
 </tr>
 <tr class="decided" data-status="decided" data-key="0" data-todo="0">
-<td class="sym"><i>s</i><sub>C,t0</sub> <i>/</i> <i>s</i><sub>L,t0</sub></td>
-<td class="code"><span class="id">share_C</span><span class="loc">Calibration.share_C (property; from Calibration.shares, or Calibration.share_C_override)</span></td>
+<td class="code"><span class="sym"><i>s</i><sub>C,t0</sub> <i>/</i> <i>s</i><sub>L,t0</sub></span><span class="id">share_C</span><span class="loc">Calibration.share_C</span></td>
 <td class="meaning">share of employment in cognitive occupations</td>
 <td class="num">0.624</td>
-<td class="src"><p>CPS 2025 counts: share of employees in SOC 11-29, 41, 43</p></td>
-<td class="treat">recalculate</td>
-<td class="num euval">0.6134</td>
-<td class="src"><p>Eurostat EU-LFS employment by detailed occupation (for EU-27, 15+) in 2025: ISCO-08 groups 1-4 plus 52 (sales workers) / civilian employment. Extracted in data/ where we compute the share for 2024 = 0.609. Source: <a href="https://ec.europa.eu/eurostat/databrowser/view/lfsa_egai2d" target="_blank" rel="noopener">https://ec.europa.eu/eurostat/databrowser/view/lfsa_egai2d</a></p></td>
-<td class="just"><p>Antropic defines cognitive work by occupation code (SOC 11-29, 41, 43). We use the EU equivalent but based on ISCO codes:</p><ul><li>groups 1-4 (managers, professionals, technicians, clerical)</li><li>+ group 52 (sales). The rest of group 5 is SOC 31-39 which are excluded</li></ul><p>Two further points:</p><ul><li>sales is the only mapping choice that matters: 0.55 without and 0.71 with all of group 5.</li><li>the ISCO mapping is a bit different from SOC: adds e.g. medical assistants, pilots but teaching aides and couriers.</li><li>The US on this same definition is ~0.635 (not 0.624).</li></ul></td>
+<td class="src"><p>CPS data: share of employees in SOC 11-29, 41, 43</p></td>
+<td class="num euval">0.613<br><span class="treat recalculate">recalculate</span></td>
+<td class="src"><p>Eurostat EU-LFS employment by detailed occupation (for EU-27, 15+) in 2025: ISCO-08 groups 1-4 plus 52 (sales workers), civilian employment. Extracted in data/ where we compute the share for 2024 = 0.609. Source: <a href="https://ec.europa.eu/eurostat/databrowser/view/lfsa_egai2d" target="_blank" rel="noopener">https://ec.europa.eu/eurostat/databrowser/view/lfsa_egai2d</a></p></td>
+<td class="just"><p>Antropic defines cognitive work by SOC codes. We use the ISCO equivalents:</p><ul><li>groups 1-4 (managers, professionals, technicians, clerical)</li><li>+ group 52 (sales). The rest of group 5 is SOC 31-39 which Antropic excludes.</li></ul><p>A further point:</p><ul><li>the ISCO mapping differs slightly from SOC (+ medical assistants, pilots; - teaching aides, couriers)</li><li>applying the ISCO map to US yields ~0.635 (vs. 0.624).</li></ul></td>
 <td><span class="pill decided">decided</span></td>
 </tr>
 <tr class="discuss" data-status="discuss" data-key="0" data-todo="0">
-<td class="sym"><i>ε</i></td>
-<td class="code"><span class="id">eps</span><span class="loc">Calibration.eps</span></td>
+<td class="code"><span class="sym"><i>ε</i></span><span class="id">eps</span><span class="loc">Calibration.eps</span></td>
 <td class="meaning">how strongly the capital stock expands when the return to capital rises</td>
 <td class="num">3</td>
 <td class="src"><p>half the long-run wealth elasticity of Moll et al. (2022)</p></td>
-<td class="treat">retain</td>
-<td class="num euval">3</td>
-<td class="src"><p>Antropic / half of Moll, Rachel and Restrepo (2022)</p></td>
-<td class="just"><p>This parameter is important for several reasons</p><ul><li>it is a judgement value and not an estimate</li><li>it is the parameter the wage-capital split is most sensitive to</li><li>deciding on a value is not trivial so we should probably keep a range like Antropic</li></ul><p>Some further notes:</p><ul><li>there is no EU estimate of this reduced-form elasticity or of the underlying wealth elasticity</li><li>not trivial to obtain either: needs household panel with wealth info and a shock to returns</li><li>the US value itself is not estimated either: Moll et al. pick a preference parameter to hit a long-run semi-elasticity, we would need a full European recalibration and credible semi-elasticity target</li><li>difficult to even guess whether it would be lower/higher as there are offsetting arguments:</li><li>we are a net capital exporter (more elastic)</li><li>but have more shallow capital markets (less elastic).</li></ul></td>
+<td class="num euval">3<br><span class="treat retain">retain</span></td>
+<td class="src"><p>Antropic use half of Moll, Rachel and Restrepo (2022)</p></td>
+<td class="just"><p>This parameter is important to consider:</p><ul><li>judgement value (not estimated)</li><li>wage-capital split is very sensitive to it</li></ul><p>There is no EU estimate for this (reduced-form) elasticity:</p><ul><li>also not of the semi-elasticity of wealth to its return</li><li>based on a calibration by Moll et al. (set such that pp increase raises long-run wealth by about half)</li><li>difficult to assess whether it would be lower/higher</li></ul></td>
 <td><span class="pill discuss">discuss</span></td>
 </tr>
 <tr class="decided grouped group-first" data-status="decided" data-key="0" data-todo="0">
-<td class="sym"><i>r̄</i></td>
-<td class="code"><span class="id">r_bar</span><span class="loc">Calibration.r_bar</span><span class="grouplabel">group: capital return (r_bar, delta and K/Y are one identity, s_K = r_bar x K/Y)</span></td>
-<td class="meaning">annual gross return to capital without AI (net return + depreciation)</td>
+<td class="code"><span class="sym"><i>r̄</i></span><span class="id">r_bar</span><span class="loc">Calibration.r_bar</span><span class="grouplabel">group: capital return</span></td>
+<td class="meaning">annual gross return to capital w/o AI (net return + depreciation)</td>
 <td class="num">0.115</td>
-<td class="src"><p>Moll et al. (2022) net return 6.5 percent, K/Y = 3.5</p></td>
-<td class="treat">recalculate</td>
-<td class="num euval">0.11</td>
-<td class="src"><p>R = s_K / (K/Y) with s_K = 0.37 and K/Y = 3.32: net fixed assets at current replacement cost over GDP for 26 Member States in 2023. Extracts in data/, computed by compute_KY.py. Source: <a href="https://ec.europa.eu/eurostat/databrowser/view/nama_10_nfa_st" target="_blank" rel="noopener">https://ec.europa.eu/eurostat/databrowser/view/nama_10_nfa_st</a></p></td>
-<td class="just"><p>Antropic obtains number from Moll et al. (2022) who state: &quot;K/Y = 3, which implies R = 11.5%&quot;. This K/Y value is based on longer term assumption (1980 US). The K/Y = 3.5 from antropic is implied by 0.4 / 0.115.</p><ul><li>the concept behind this is the return to capital at replacement cost. This is measured directly in EU national accounts.</li><li>if we retained 0.115 this would imply K/Y = 3.22. This is within 3% of the measured 3.32 anyway.</li></ul></td>
+<td class="src"><p>$\bar r = r + \delta$.</p><p>Moll et al. (2022) set net return $r = 0.065$ and depreciation $\delta = 0.05$</p></td>
+<td class="num euval">0.11<br><span class="treat recalculate">recalculate</span></td>
+<td class="src"><p>Note that $\bar r = \frac{s_K}{K/Y}$. We have $s_K = 0.37$ from the labor share. Also $K/Y = 3.32$ is measurable: net fixed assets at current replacement cost over GDP (2023). Extracts in data/, computed by compute_KY.py.</p><p>Source: <a href="https://ec.europa.eu/eurostat/databrowser/view/nama_10_nfa_st" target="_blank" rel="noopener">https://ec.europa.eu/eurostat/databrowser/view/nama_10_nfa_st</a></p></td>
+<td class="just"><p>We use the same identity $\bar r = \frac{s_K}{K/Y}$:</p><ul><li>Antropic fixes the $r$ and lets K/Y follow</li><li>we measure K/Y from national accounts and return follows</li><li>this yields $\bar r = 0.37 / 3.32 = 0.11$ (close to their 0.115)</li></ul></td>
 <td><span class="pill decided">decided</span></td>
 </tr>
 <tr class="decided grouped group-last" data-status="decided" data-key="0" data-todo="0">
-<td class="sym"><i>δ</i></td>
-<td class="code"><span class="id">delta</span><span class="loc">Calibration.delta</span></td>
+<td class="code"><span class="sym"><i>δ</i></span><span class="id">delta</span><span class="loc">Calibration.delta</span></td>
 <td class="meaning">share of the capital stock that wears out each year</td>
 <td class="num">0.05</td>
-<td class="src"><p>Moll et al. (2022); net return 6.5 percent, K/Y = 3.5</p></td>
-<td class="treat">recalculate</td>
-<td class="num euval">0.055</td>
-<td class="src"><p>Consumption of fixed capital / net fixed assets = (CFC/GDP) / (K/Y) = 0.183 / 3.32. EU-27 for 2023 (AMECO UKCT / UVGD for CFC and GDP; Eurostat as for r_bar). Computed by compute_KY.py. Source: <a href="https://db.nomics.world/AMECO/UKCT" target="_blank" rel="noopener">https://db.nomics.world/AMECO/UKCT</a></p></td>
-<td class="just"><p>The US measured the same way gives 0.052 which is essentially Antropic rounds to 0.05.</p><ul><li>net return r = 0.11 - 0.055 = 5.5%</li><li>vs 6.5% in Antropic and 7.4% for US measured this way</li></ul></td>
+<td class="src"><p>depreciation rate 0.05 assumed by Moll et al. (2022)</p></td>
+<td class="num euval">0.055<br><span class="treat recalculate">recalculate</span></td>
+<td class="src"><p>Consumption of fixed capital over net fixed assets: $\delta = \frac{CFC}{K} = \frac{0.183}{3.32}$. We take CFC/Y from AMECO (2023) and K/Y as for r_bar. Computed by compute_KY.py.</p><p>Source: <a href="https://db.nomics.world/AMECO/UKCT" target="_blank" rel="noopener">https://db.nomics.world/AMECO/UKCT</a></p></td>
+<td class="just"><ul><li>the US measured this way gives 0.052 ($\approx 0.05$ of Antropic) - the EU net return: $r = \bar r - \delta = 0.11 - 0.055 = 5.5\%$</li><li>while Antropic have it at 6.5%</li></ul></td>
 <td><span class="pill decided">decided</span></td>
 </tr>
 <tr class="decided" data-status="decided" data-key="0" data-todo="0">
-<td class="sym"><i>t0</i></td>
-<td class="code"><span class="id">t0</span><span class="loc">Calibration.t0</span></td>
+<td class="code"><span class="sym"><i>t0</i></span><span class="id">t0</span><span class="loc">Calibration.t0</span></td>
 <td class="meaning">base year of the exercise</td>
-<td class="num">2024.0</td>
+<td class="num">2024</td>
 <td class="src"></td>
-<td class="treat">retain</td>
-<td class="num euval">2024.0</td>
+<td class="num euval">2024<br><span class="treat retain">retain</span></td>
 <td class="src"><p>Antropic</p></td>
-<td class="just"><ul><li>The base period of the exercise (not an economic quantity) - Keeping the same window to make the EU and US scenarios comparable</li></ul></td>
+<td class="just"><p>Base period of the exercise, kept the same to make EU and US scenarios comparable</p></td>
 <td><span class="pill decided">decided</span></td>
 </tr>
 <tr class="decided" data-status="decided" data-key="0" data-todo="0">
-<td class="sym"></td>
-<td class="code"><span class="id">t_anchor</span><span class="loc">Calibration.t_anchor</span></td>
+<td class="code"><span class="sym"></span><span class="id">t_anchor</span><span class="loc">Calibration.t_anchor</span></td>
 <td class="meaning">date at which AI exposure and adoption are observed in the data (mid-2026)</td>
 <td class="num">2026.5</td>
 <td class="src"></td>
-<td class="treat">retain</td>
-<td class="num euval">2026.5</td>
+<td class="num euval">2026.5<br><span class="treat retain">retain</span></td>
 <td class="src"><p>Antropic</p></td>
-<td class="just"><div class="en">(i) The date at which the affected mass and diffusion share are observed (m_anchor, d_anchor).</div><div class="en">(ii) Look for EU anchors for those measured at the same date or change the date</div></td>
+<td class="just"><p>The date at which exposure and adoption are observed (m_anchor, d_anchor).</p><ul><li>look for EU anchors measured at the same date (or change)</li></ul></td>
 <td><span class="pill decided">decided</span></td>
 </tr>
 <tr class="decided" data-status="decided" data-key="0" data-todo="0">
-<td class="sym"></td>
-<td class="code"><span class="id">t_read</span><span class="loc">Calibration.t_read</span></td>
+<td class="code"><span class="sym"></span><span class="id">t_read</span><span class="loc">Calibration.t_read</span></td>
 <td class="meaning">date at which the scenario outcomes are reported (start of 2030)</td>
-<td class="num">2030.0</td>
+<td class="num">2030</td>
 <td class="src"></td>
-<td class="treat">retain</td>
-<td class="num euval">2030.0</td>
+<td class="num euval">2030<br><span class="treat retain">retain</span></td>
 <td class="src"><p>Antropic</p></td>
-<td class="just"><ul><li>antropic reports everything at the start of 2030 - same horizon for the EU keeps the tables comparable</li></ul></td>
+<td class="just"><p>The date at which scenario outcomes are reported, kept the same to make EU and US scenarios comparable</p></td>
 <td><span class="pill decided">decided</span></td>
 </tr>
 <tr class="decided" data-status="decided" data-key="0" data-todo="0">
-<td class="sym"><i>h</i></td>
-<td class="code"><span class="id">months_per_year</span><span class="loc">Calibration.months_per_year</span></td>
+<td class="code"><span class="sym"><i>h</i></span><span class="id">months_per_year</span><span class="loc">Calibration.months_per_year</span></td>
 <td class="meaning">length of one model period (code stores periods per year)</td>
 <td class="num">12</td>
 <td class="src"></td>
-<td class="treat">retain</td>
-<td class="num euval">12</td>
+<td class="num euval">12<br><span class="treat retain">retain</span></td>
 <td class="src"><p>Antropic</p></td>
-<td class="just"><ul><li>Period length of the model and not a data frequency: the model needs monthly rates, not monthly data. - EU flow data are quarterly unlike the monthly CPS and JOLTS. Quarterly transition probabilities are converted to monthly hazards with the time-aggregation correction of Shimer (2012) / Elsby, Hobijn and Sahin (2013).</li></ul></td>
+<td class="just"><p>The length of a period in the model. Not a data frequency: the model needs monthly rates, not monthly data.</p><ul><li>our flow data are quarterly unlike the monthly CPS and JOLTS</li><li>but quarterly transition probabilities can be converted to monthly hazards (Shimer 2012)</li></ul></td>
 <td><span class="pill decided">decided</span></td>
 </tr>
 <tr class="decided" data-status="decided" data-key="0" data-todo="0">
-<td class="sym"><i>λ</i></td>
-<td class="code"><span class="id">lam</span><span class="loc">Calibration.lam</span></td>
+<td class="code"><span class="sym"><i>λ</i></span><span class="id">lam</span><span class="loc">Calibration.lam</span></td>
 <td class="meaning">how research effort turns into new ideas</td>
 <td class="num">1</td>
 <td class="src"><p>no duplication</p></td>
-<td class="treat">retain</td>
-<td class="num euval">1</td>
+<td class="num euval">1<br><span class="treat retain">retain</span></td>
 <td class="src"><p>Antropic (Jones-type ideas production function with no duplication of research effort)</p></td>
-<td class="just"><p>Structural parameter of the ideas production function. A value of one means no duplication of effort</p><ul><li>i.e. twice the number of researchers is twice the number of ideas</li></ul><p>Convention about how ideas are produced with no EU-specific channel.</p><ul><li>but this ideas channel is small by 2030 in any case</li></ul></td>
+<td class="just"><p>A structural parameter of the ideas production function. Value of one means no duplication of effort</p><ul><li>i.e. 2x number of researchers is 2x number of ideas</li><li>this is a convention about how ideas are produced in the worldwide market and a small channel anyway</li></ul></td>
 <td><span class="pill decided">decided</span></td>
 </tr>
 <tr class="decided" data-status="decided" data-key="0" data-todo="0">
-<td class="sym"><i>1</i> <i>−</i> <i>ϕ</i></td>
-<td class="code"><span class="id">one_minus_phi</span><span class="loc">Calibration.one_minus_phi</span></td>
+<td class="code"><span class="sym"><i>1</i> <i>−</i> <i>ϕ</i></span><span class="id">one_minus_phi</span><span class="loc">Calibration.one_minus_phi</span></td>
 <td class="meaning">how much harder new ideas are to find as the ideas stock grows</td>
 <td class="num">3.1</td>
 <td class="src"><p>Bloom et al. (2020)</p></td>
-<td class="treat">retain</td>
-<td class="num euval">3.1</td>
-<td class="src"><p>Antropic / Bloom, Jones, Van Reenen and Webb (2020), &quot;Are Ideas Getting Harder to Find?&quot;, aggregate US estimate of the fishing-out exponent (their beta).</p></td>
-<td class="just"><p>How fast research productivity falls as the ideas stock grows.</p><ul><li>a property of the idea space and not a given economy</li><li>the EU draws on the same world frontier, so the US estimate is the natural value</li><li>and Boeing and Huenermund (2020) find similar values in German data</li></ul></td>
+<td class="num euval">3.1<br><span class="treat retain">retain</span></td>
+<td class="src"><p>Bloom et al. (2020). Aggregate US estimate of the fishing-out exponent.</p></td>
+<td class="just"><p>How fast research productivity falls as the ideas stock grows:</p><ul><li>a property of the idea space and not a given economy</li><li>we draw on the same world frontier, so no reason for different value + Boeing and Huenermund (2020) find similar results Germany</li></ul></td>
 <td><span class="pill decided">decided</span></td>
 </tr>
 <tr class="decided" data-status="decided" data-key="0" data-todo="0">
-<td class="sym"><i>1</i> <i>−</i> <i>ϕ</i><sub>R</sub></td>
-<td class="code"><span class="id">one_minus_phi_R</span><span class="derived">[derived]</span><span class="loc">Calibration.one_minus_phi_R (property)</span></td>
-<td class="meaning">the same effect restated in model units: derived (not set)</td>
+<td class="code"><span class="sym"><i>1</i> <i>−</i> <i>ϕ</i><sub>R</sub></span><span class="id">one_minus_phi_R</span><span class="derived">[derived]</span><span class="loc">Calibration.one_minus_phi_R</span></td>
+<td class="meaning">the same effect restated in model units</td>
 <td class="num">2.86</td>
 <td class="src"><p>Equation (40)</p></td>
-<td class="treat">derived</td>
-<td class="num euval"></td>
+<td class="num euval">2.953<br><span class="treat derived">derived</span></td>
 <td class="src"><p>identity in the model, see formula</p></td>
-<td class="just"><p>Derived: s_L x (1 - phi) + lambda = 0.63 x 3.1 + 1 = 2.95 for the EU (2.86 in Antropic). The loader refuses a value here; change the inputs instead.</p></td>
+<td class="just"><p>Derived as $s_L (1 - \phi) + \lambda$</p></td>
 <td><span class="pill decided">decided</span></td>
 </tr>
 <tr class="decided" data-status="decided" data-key="0" data-todo="0">
-<td class="sym"><i>g</i></td>
-<td class="code"><span class="id">g</span><span class="derived">[derived]</span><span class="loc">Calibration.g (property)</span></td>
+<td class="code"><span class="sym"><i>g</i></span><span class="id">g</span><span class="derived">[derived]</span><span class="loc">Calibration.g</span></td>
 <td class="meaning">annual growth of the ideas stock without AI (model units) derived from TFP growth and the labour share</td>
-<td class="num">0.0167</td>
+<td class="num">0.017</td>
 <td class="src"><p>postwar TFP growth</p></td>
-<td class="treat">derived</td>
-<td class="num euval"></td>
+<td class="num euval">0.013<br><span class="treat derived">derived</span></td>
 <td class="src"><p>identity in the model, see formula</p></td>
-<td class="just"><p>Derived: g_A / s_L. With the EU labour share of 0.63 and the EU g_A decided below, the loader computes it. Antropic: 0.010 / 0.60 = 0.0167.</p></td>
+<td class="just"><p>Derived from other values as $g = g_A / s_L$</p></td>
 <td><span class="pill decided">decided</span></td>
 </tr>
-<tr class="discuss grouped group-first" data-status="discuss" data-key="0" data-todo="0">
-<td class="sym"><i>g</i><sub>A</sub></td>
-<td class="code"><span class="id">g_A</span><span class="loc">Calibration.g_A</span><span class="grouplabel">group: no-AI trend growth (g_A / s_L + n should match EU potential growth, 1.3-1.4%)</span></td>
-<td class="meaning">annual trend growth of measured productivity (TFP) without AI</td>
+<tr class="discuss" data-status="discuss" data-key="0" data-todo="0">
+<td class="code"><span class="sym"><i>g</i><sub>A</sub></span><span class="id">g_A</span><span class="loc">Calibration.g_A</span></td>
+<td class="meaning">annual trend growth of productivity (TFP) without AI</td>
 <td class="num">0.01</td>
 <td class="src"><p>postwar TFP growth</p></td>
-<td class="treat">recalibrate</td>
-<td class="num euval">0.008</td>
+<td class="num euval">0.008<br><span class="treat recalibrate">recalibrate</span></td>
 <td class="src"><p>AMECO series of total factor productivity for EU-27. Average log growth 1995-2024 is 0.77% a year. The same series and window give the US 1.09%, which is approx Antropic&#x27;s 0.010. Extract in data/. Source: <a href="https://db.nomics.world/AMECO/ZVGDF" target="_blank" rel="noopener">https://db.nomics.world/AMECO/ZVGDF</a></p></td>
-<td class="just"><p>Trend TFP growth without AI. This is used for the no-AI baseline and the ideas stock. An important note:</p><ul><li>the post-2019 slump is kept: not known whether it is temporary or permanent</li><li>leaving it out (1995-2019) gives 0.89%; the slump years alone (2019-2024) give 0.19%</li><li>could also use this value as a check</li></ul><p>Consistency with n: g = 0.008 / 0.63 = 1.27% matching the Commission&#x27;s 1.3-1.4% EU potential growth (AMECO OVGDP)</p><ul><li>leaves about 0.1% for labour-force growth.</li></ul></td>
+<td class="just"><p>Trend TFP growth without AI used for the no-AI baseline and the ideas stock</p><ul><li>the post-2019 slump is kept: not known whether it is temporary or permanent</li><li>leaving it out (1995-2019) gives 0.89% (slump years alone (2019-2024) are just 0.19%)</li><li>since $g = g_A / s_L = 0.008 / 0.63 = 1.27\%$ about 0.1% is left for $n$ (Commission estimates 1.3-1.4% potential growth)</li></ul></td>
 <td><span class="pill discuss">discuss</span></td>
 </tr>
-<tr class="discuss grouped group-last" data-status="discuss" data-key="0" data-todo="0">
-<td class="sym"><i>n</i></td>
-<td class="code"><span class="id">n</span><span class="loc">Calibration.n</span></td>
+<tr class="discuss grouped group-first group-last" data-status="discuss" data-key="0" data-todo="0">
+<td class="code"><span class="sym"><i>n</i></span><span class="id">n</span><span class="loc">Calibration.n</span><span class="grouplabel">group: no-AI trend growth</span></td>
 <td class="meaning">annual growth of the labour force without AI</td>
-<td class="num">0.0033</td>
-<td class="src"><p>Set so that GDP grows at 2 percent without AI. The BLS projections put labor-force growth near 0.4</p></td>
-<td class="treat">recalibrate</td>
-<td class="num euval">0.001</td>
-<td class="src"><p>GDP without AI grows at g + n. The Commission estimates the EU economy can grow 1.3-1.4% a year We already have g = 1.27% (TFP growth / labour share). Leaves about 0.1% a year for the labour force, so n = 0.001. Check against labour-force data: the EU labour force grew 0.6% a year over 2015-2024 and the Commission forecasts +0.45% a year to 2027 (AMECO NLTN); but the population aged 20-64 is projected to shrink 0.37% a year to 2030 (Eurostat EUROPOP2023) and the 2024 Ageing Report has the labour force falling 0.3% a year in the long run. Sources: <a href="https://db.nomics.world/AMECO/OVGDP" target="_blank" rel="noopener">https://db.nomics.world/AMECO/OVGDP</a>, <a href="https://db.nomics.world/AMECO/NLTN" target="_blank" rel="noopener">https://db.nomics.world/AMECO/NLTN</a>, <a href="https://ec.europa.eu/eurostat/databrowser/view/proj_23np" target="_blank" rel="noopener">https://ec.europa.eu/eurostat/databrowser/view/proj_23np</a></p></td>
-<td class="just"><p>Antropic does the same for the US: pick n so GDP without AI grows 2% a year. They note that BLS projects labour-force growth of about 0.4%. Here n is picked so that GDP without AI grows at the Commission&#x27;s 1.3-1.4%.</p><ul><li>n only changes the reported no-AI GDP growth and level</li><li>the data checks point in the opposite directions: the labour force has been growing (more</li></ul><p>people working, migration)</p><ul><li>but every projection has the shrinking working-age population winning by 2030</li><li>the 0.1% value sits in between</li></ul></td>
+<td class="num">0.003</td>
+<td class="src"><p>Set so that GDP grows at 2 percent without AI. The BLS projections put labor-force growth close, at 0.4%</p></td>
+<td class="num euval">0.001<br><span class="treat recalibrate">recalibrate</span></td>
+<td class="src"><p>GDP without AI grows at $g + n$. The Commission estimates the EU economy can grow 1.3-1.4% a year. We already have $g = 1.27\%$ which leaves 0.1% a year for the labour force. Slightly off, because projections expect the labour force (20-64) to fall slightly (by -0.1% per year). Sources: ECFIN Ageing Report (2024)</p></td>
+<td class="just"><p>Antropic also picks $n$ so GDP without AI grows at some rate. In the US the BLS projects labour-force growth of about 0.4% which is close to their backed-out value of 0.33%. We do the same: pick $n = 0.1\%$ such that GDP without AI grows at the Commission&#x27;s 1.3-1.4%. This is nonetheless a bit further from the projections (-0.1%). This parameter is not that important because $n$ only changes the reported no-AI GDP growth and level.</p></td>
 <td><span class="pill discuss">discuss</span></td>
-</tr>
-<tr class="decided" data-status="decided" data-key="0" data-todo="0">
-<td class="sym"><i>ι</i><sub>R,t0</sub></td>
-<td class="code"><span class="id">iota_R</span><span class="loc">Calibration.iota_R</span></td>
-<td class="meaning">share of GDP spent on research in 2024</td>
-<td class="num">0.035</td>
-<td class="src"><p>R&amp;D share in the national accounts</p></td>
-<td class="treat">recalibrate</td>
-<td class="num euval">0.023</td>
-<td class="src"><p>Eurostat R&amp;D expenditure as % of GDP (EU-27 2024): 2.26 (US = 3.44, Antropic&#x27;s 0.035). Extract in data/. Source: <a href="https://ec.europa.eu/eurostat/databrowser/view/rd_e_gerdtot" target="_blank" rel="noopener">https://ec.europa.eu/eurostat/databrowser/view/rd_e_gerdtot</a></p></td>
-<td class="just"><p>Documentation only: the simulation never reads this field. Antropic uses it to show that its chosen TFP growth is consistent with the research effort. The EU spends 2.3% of GDP on R&amp;D against 3.4% in the US. Recorded so the EU table is internally consistent, with no effect on results.</p></td>
-<td><span class="pill decided">decided</span></td>
-</tr>
-<tr class="decided" data-status="decided" data-key="0" data-todo="0">
-<td class="sym"><i>g</i><sub>ι</sub></td>
-<td class="code"><span class="id">g_iota</span><span class="loc">not in code</span></td>
-<td class="meaning">trend growth of the research share of GDP, per year (documentation only, not used by the model)</td>
-<td class="num">0.028</td>
-<td class="src"><p>Equation (41) in Appendix C</p></td>
-<td class="treat">recalibrate</td>
-<td class="num euval">0.01</td>
-<td class="src"><p>Eurostat EU-27 R&amp;D share rose from 1.96% (2010) to 2.26% (2024): 1.0% a year. The US share rose 1.7% a year over the same years (Antropic: 0.028). Source: <a href="https://ec.europa.eu/eurostat/databrowser/view/rd_e_gerdtot" target="_blank" rel="noopener">https://ec.europa.eu/eurostat/databrowser/view/rd_e_gerdtot</a></p></td>
-<td class="just"><p>Documentation only: not in the code. Antropic uses it to reconcile TFP growth with research effort growth. We take g_A from the data directly. Recorded for completeness; no effect on results.</p></td>
-<td><span class="pill decided">decided</span></td>
 </tr>
 </tbody></table></div><div class="empty">No rows match the current filter.</div></details>
-<details class="panel" open data-sec="B"><summary><span class="letter">B</span><span class="title">AI in the production of goods and services</span><span class="meta"><span class="shown">8</span> of 8 parameters</span><span class="mini"><span class="pill decided" title="decided">3</span><span class="pill discuss" title="discuss">1</span><span class="pill open" title="open">4</span></span><span class="chev">&#9656;</span></summary>
-<div class="wrap"><table><colgroup><col style="width:6%"><col style="width:11%"><col style="width:8%"><col style="width:6%"><col style="width:10%"><col style="width:6%"><col style="width:6%"><col style="width:12%"><col style="width:28%"><col style="width:7%"></colgroup><thead><tr>
-<th>Symbol</th>
-<th>Parameter (code)</th>
+<details class="panel" open data-sec="B"><summary><span class="letter">B</span><span class="title">AI in the production of goods and services</span><span class="meta"><span class="shown">8</span> of 8 parameters</span><span class="mini"><span class="pill decided" title="decided">6</span><span class="pill discuss" title="discuss">2</span></span><span class="chev">&#9656;</span></summary>
+<div class="wrap"><table><colgroup><col style="width:10%"><col style="width:9%"><col style="width:6%"><col style="width:10%"><col style="width:7%"><col style="width:19%"><col style="width:32%"><col style="width:7%"></colgroup><thead><tr>
+<th>Parameter</th>
 <th>Meaning</th>
 <th>US value</th>
 <th>US source</th>
-<th>EU treatment</th>
 <th>EU value</th>
 <th>EU source / hint</th>
 <th class="just">Justification</th>
 <th>Status</th>
 </tr></thead><tbody>
 <tr class="decided key" data-status="decided" data-key="1" data-todo="0">
-<td class="sym"><i>m</i><sub>t</sub></td>
-<td class="code"><span class="star" title="key EU difference">★</span><span class="id">m_anchor</span><span class="loc">Calibration.m_anchor</span></td>
+<td class="code"><span class="sym"><span class="star" title="key difference">★</span><i>m</i><sub>t</sub></span><span class="id">m_anchor</span><span class="loc">Calibration.m_anchor</span></td>
 <td class="meaning">share of cognitive work that AI can already do at anchor date (now: mid 2026)</td>
 <td class="num">0.14</td>
 <td class="src"><p>observed exposure averaged over occupations (Massenkoff and McCrory, 2026)</p></td>
-<td class="treat">recalculate</td>
-<td class="num euval">0.12</td>
-<td class="src"><p>Anthropic Economic Index: labor_market_impacts/job_exposure.csv This is observed exposure by occupation from Massenkoff and McCrory (2026). We reweight by EU-27 employment (EU LFS, 2025) through the IBS SOC-to-ISCO crosswalk. This yields: US 0.136, EU 0.118, ratio 0.86 that is then applied to Antropic&#x27;s 0.14. Computed by compute_values/compute_exposure.py. Source: <a href="https://huggingface.co/datasets/Anthropic/EconomicIndex" target="_blank" rel="noopener">https://huggingface.co/datasets/Anthropic/EconomicIndex</a></p></td>
-<td class="just"><p>Share of all tasks where AI is observed doing the work (mid-2026). The model uses it as capability, adoption itself is d_anchor. We simply use US occupation scores with EU employment weights.</p><ul><li>the EU value is 14% lower thant the US</li><li>mainly because observed exposure is concentrated in programmers, customer-service clerks and business associate professionals</li><li>here EU employment is substantially smaller</li></ul></td>
+<td class="num euval">0.12<br><span class="treat recalculate">recalculate</span></td>
+<td class="src"><p>This is observed exposure by occupation from Massenkoff and McCrory (2026). We reweight by EU-27 employment at 3-digit ISCO (EU-LFS microdata 2024, data/eulfs_employment_isco3d_2024.csv) through the IBS SOC-to-ISCO crosswalk. This yields 0.122 for the EU: 89% of the US value computed the same way (0.137). So we compute the value as 0.14 x 0.89 = 0.12. Computed by compute_values/compute_exposure.py. Source: <a href="https://huggingface.co/datasets/Anthropic/EconomicIndex" target="_blank" rel="noopener">https://huggingface.co/datasets/Anthropic/EconomicIndex</a></p></td>
+<td class="just"><p>Share of all tasks where AI is observed doing the work (mid-2026). The model uses it as capability, adoption itself is d_anchor. We simply use US occupation scores with EU employment weights:</p><ul><li>yields a slightly lower value than the US (0.122 against 0.137)</li><li>mainly because observed exposure is concentrated in programmers, customer-service clerks and business associate professionals where EU is smaller</li></ul></td>
 <td><span class="pill decided">decided</span></td>
 </tr>
-<tr class="decided key" data-status="decided" data-key="1" data-todo="1">
-<td class="sym"><i>m</i><sub>2030</sub></td>
-<td class="code"><span class="star" title="key EU difference">★</span><span class="id">m_2030</span><span class="loc">Scenario.m_2030</span></td>
-<td class="meaning">share of cognitive work AI can do by 2030 (scenario&#x27;s)</td>
+<tr class="decided key" data-status="decided" data-key="1" data-todo="0">
+<td class="code"><span class="sym"><span class="star" title="key difference">★</span><i>m</i><sub>2030</sub></span><span class="id">m_2030</span><span class="loc">Scenario.m_2030</span></td>
+<td class="meaning">share of cognitive work AI can do by 2030 (per scenario)</td>
 <td class="num">0.2 / 0.3 / 0.5<span class="mse">modest / substantial / extreme</span></td>
 <td class="src"><p>scenario are low end, middle, and near high end of rated feasibility by Eloundou et al. (2024)</p></td>
-<td class="treat">recalculate</td>
-<td class="num euval">0.18 / 0.29 / 0.48<span class="mse">modest / substantial / extreme</span></td>
-<td class="src"><p>Eloundou et al. (2024) occupation ratings (github.com/openai/GPTs-are-GPTs) reweighted by EU-27 employment (from LFS, 2025) through the IBS SOC-to-ISCO crosswalk. The EU / US ratios on the human alpha, beta, gamma means: 0.90, 0.95, 0.97, applied to Antropic&#x27;s 0.2 / 0.3 / 0.5. Inputs in data/, computed by compute_values/compute_exposure.py.</p></td>
-<td class="just"><p>Antropic&#x27;s three values are the US employment-weighted means of Eloundou&#x27;s three exposure measures. The ratings describe the technology, only the weights are national. So the EU values are the same ratings on EU employment weights.</p><ul><li>the EU is 3-10% lower: more employment in science, teaching and craft occupations, less in business associate professionals, customer-service clerks and sales workers, where exposure is highest.</li><li>public EU data stop at 2-digit ISCO, we for now using US within-group weights</li></ul></td>
-<td><span class="pill decided">decided</span><br><span class="pill todo">to-do</span><div class="todo-text">redo with EU-LFS scientific-use microdata (3-digit ISCO) so the within-group mix is European too</div></td>
+<td class="num euval">0.18 / 0.28 / 0.48<span class="mse">modest / substantial / extreme</span><br><span class="treat recalculate">recalculate</span></td>
+<td class="src"><p>Eloundou et al. (2024) three exposure measures averaged over occupations with EU instead of US employment weights (3-digit ISCO, EU-LFS microdata 2024). Comes out to 0.89, 0.94 and 0.96 of the US means. Rescaling Antropic&#x27;s 0.2 / 0.3 / 0.5 gives 0.18 / 0.28 / 0.48. Inputs in data/, computed by compute_values/compute_exposure.py.</p><p>Source: <a href="https://github.com/openai/GPTs-are-GPTs/blob/main/data/occ_level.csv" target="_blank" rel="noopener">https://github.com/openai/GPTs-are-GPTs/blob/main/data/occ_level.csv</a></p></td>
+<td class="just"><p>Antropic&#x27;s values are the US employment-weighted means of Eloundou&#x27;s three exposure measures. The ratings describe the technology, only the weights are national, so we simply use EU employment weights instead:</p><ul><li>the EU is 4-11% lower: more employment in science, teaching and craft occupations, less in business associate professionals, customer-service clerks and sales workers, where exposure is highest.</li></ul></td>
+<td><span class="pill decided">decided</span></td>
 </tr>
 <tr class="decided" data-status="decided" data-key="0" data-todo="0">
-<td class="sym"><i>m̄</i></td>
-<td class="code"><span class="id">m_ceiling</span><span class="derived">[derived]</span><span class="loc">Calibration.m_bar (property; Calibration.m_ceiling overrides)</span></td>
+<td class="code"><span class="sym"><i>m̄</i></span><span class="id">m_ceiling</span><span class="derived">[derived]</span><span class="loc">Calibration.m_bar</span></td>
 <td class="meaning">the most work AI can ever affect: all cognitive work</td>
 <td class="num">0.624</td>
 <td class="src"><p>all cognitive work</p></td>
-<td class="treat">derived</td>
-<td class="num euval"></td>
+<td class="num euval">0.613<br><span class="treat derived">derived</span></td>
 <td class="src"><p>identity in the model, see formula</p></td>
 <td class="just"><p>Derived: the ceiling is all cognitive work, so it equals the EU cognitive share, 0.6134 (Antropic: 0.624). The code takes it from share_C automatically; a value here would only be needed to impose a lower ceiling, which nothing argues for.</p></td>
 <td><span class="pill decided">decided</span></td>
 </tr>
 <tr class="discuss key" data-status="discuss" data-key="1" data-todo="1">
-<td class="sym"><i>d</i><sub>t</sub></td>
-<td class="code"><span class="star" title="key EU difference">★</span><span class="id">d_anchor</span><span class="loc">Calibration.d_anchor</span></td>
-<td class="meaning">share of affected work where AI is actually in use at anchor data (mid 2026)</td>
+<td class="code"><span class="sym"><span class="star" title="key difference">★</span><i>d</i><sub>t</sub></span><span class="id">d_anchor</span><span class="loc">Calibration.d_anchor</span></td>
+<td class="meaning">share of affected work where AI is actually in use at anchor date (mid 2026)</td>
 <td class="num">0.1</td>
-<td class="src"><p>firm AI use, Business Trends and Outlook Survey and its 2026 AI supplement (U.S. Census Bureau, 2026; Bonney et al., 2026)</p></td>
-<td class="treat">recalculate</td>
-<td class="num euval">0.06</td>
-<td class="src"><p>JRC AIM-WORK survey (2024/25, ~50,000 EU workers), cleaned as in De Schouwer (2026): adoption x share of the eight tasks handed off x frequency, cognitive occupations. Computed by compute_values/compute_d_anchor_aimwork.py. Source: <a href="https://publications.jrc.ec.europa.eu/repository/handle/JRC143933" target="_blank" rel="noopener">https://publications.jrc.ec.europa.eu/repository/handle/JRC143933</a></p></td>
-<td class="just"><p>d is the share of task instances done with AI; AIM-WORK observes hand-off directly, so the EU level is measured, not scaled from the US.</p><div class="en">(i) Frequency is the judgement: graded reading 0.06, at-least-weekly 0.10, headcount 0.15.</div><div class="en">(ii) Cross-check: Antropic&#x27;s 0.10 x the EU/US firm adoption ratio 0.59 (Bick et al. 2026) also gives 0.06.</div><div class="en">(iii) The wave predates mid-2026; EU adoption rose only ~4% over the next year.</div></td>
-<td><span class="pill discuss">discuss</span><br><span class="pill todo">to-do</span><div class="todo-text">replace with the 2026 AIM-WORK wave</div></td>
+<td class="src"><p>Business Trends and Outlook Survey AI supplement (U.S. Census Bureau, 2026; Bonney et al., 2026)</p></td>
+<td class="num euval">0.06<br><span class="treat recalculate">recalculate</span></td>
+<td class="src"><p>JRC AIM-WORK survey (2024/25, ~50,000 EU workers). Measured as: adoption $\times$ share of genAI tasks handed off $\times$ frequency (for cognitive occupations). Computed by compute_values/compute_d_anchor_aimwork.py.</p><p>Source: <a href="https://publications.jrc.ec.europa.eu/repository/handle/JRC143933" target="_blank" rel="noopener">https://publications.jrc.ec.europa.eu/repository/handle/JRC143933</a></p></td>
+<td class="just"><p>This parameter captures the share of work that AI can do where it is already used. We observe that hand-off in AIM-WORK. The EU level is measured directly and not scaled from the US. Some further notes:</p><ul><li>frequency is observed for genAI as a whole, not per task</li><li>counting every hand-off as fully handed off gives 0.15, weekly users only gives 0.10, graded by frequency 0.06</li><li>cross-check: Antropic&#x27;s $0.10 \times$ the EU/US firm adoption ratio $0.59$ from Bick (2026) also gives 0.06.</li></ul></td>
+<td><span class="pill discuss">discuss</span><br><span class="pill todo">to-do</span><div class="todo-text">replace with the Sygred numbers</div></td>
 </tr>
-<tr class="open" data-status="open" data-key="0" data-todo="0">
-<td class="sym"><i>d</i><sub>2030</sub></td>
-<td class="code"><span class="id">d_2030</span><span class="loc">Scenario.d_2030</span></td>
-<td class="meaning">share of the affected work where AI is in use by 2030, per scenario</td>
+<tr class="discuss key" data-status="discuss" data-key="1" data-todo="0">
+<td class="code"><span class="sym"><span class="star" title="key difference">★</span><i>d</i><sub>2030</sub></span><span class="id">d_2030</span><span class="loc">Scenario.d_2030</span></td>
+<td class="meaning">share of the affected work where AI is in use by 2030 (per scenario)</td>
 <td class="num">0.2 / 0.4 / 0.6<span class="mse">modest / substantial / extreme</span></td>
 <td class="src"><p>scenario assumptions</p></td>
-<td class="treat"></td>
-<td class="num euval"></td>
-<td class="src"></td>
-<td class="just"></td>
-<td><span class="pill open">open</span></td>
+<td class="num euval">0.12 / 0.24 / 0.36<span class="mse">modest / substantial / extreme</span><br><span class="treat recalibrate">recalibrate</span></td>
+<td class="src"><p>We scale these to keep the EU/US adoption ratio (=0.6, see Bick et al.) constant. So EU does not catch up (we could run a convergence experiment).</p></td>
+<td class="just"><p>The scenarios are about how fast AI spreads. Reaching the same rates as in the US by 2030 is unlikely</p><ul><li>Bick et al. (2026) trace most of the gap to occupations + firm size (both unlikely to change) and employer encouragement</li><li>the ICT gap persisted for over a decade (Bloom et al. 2012).</li><li>this is an important assumption: using Antropic&#x27;s values we get $\approx 2x$ effects</li></ul></td>
+<td><span class="pill discuss">discuss</span></td>
 </tr>
-<tr class="open" data-status="open" data-key="0" data-todo="0">
-<td class="sym"><i>d̄</i></td>
-<td class="code"><span class="id">d_ceiling</span><span class="loc">Calibration.d_ceiling</span></td>
+<tr class="decided" data-status="decided" data-key="0" data-todo="0">
+<td class="code"><span class="sym"><i>d̄</i></span><span class="id">d_ceiling</span><span class="loc">Calibration.d_ceiling</span></td>
 <td class="meaning">the most diffusion can reach: every affected task</td>
 <td class="num">1</td>
 <td class="src"><p>every instance</p></td>
-<td class="treat"></td>
-<td class="num euval"></td>
-<td class="src"></td>
-<td class="just"></td>
-<td><span class="pill open">open</span></td>
+<td class="num euval">1<br><span class="treat retain">retain</span></td>
+<td class="src"><p>identity in the model, as for m_ceiling</p></td>
+<td class="just"><p>A definitional ceiling</p></td>
+<td><span class="pill decided">decided</span></td>
 </tr>
-<tr class="open" data-status="open" data-key="0" data-todo="0">
-<td class="sym"><i>a</i><sub>t</sub></td>
-<td class="code"><span class="id">a_anchor</span><span class="loc">Scenario.a_anchor</span></td>
-<td class="meaning">productivity gain where AI is in use, at the anchor, in log points (0.30 is about 35 percent more output per task)</td>
+<tr class="decided" data-status="decided" data-key="0" data-todo="0">
+<td class="code"><span class="sym"><i>a</i><sub>t</sub></span><span class="id">a_anchor</span><span class="loc">Scenario.a_anchor</span></td>
+<td class="meaning">productivity gain where AI is in use at the anchor (log points)</td>
 <td class="num">0.3 / 0.35 / 0.45<span class="mse">modest / substantial / extreme</span></td>
-<td class="src"><p>scenario assumptions: all-in gains in trials and at the frontier (Brynjolfsson et al., 2025; Huang et al., 2025; Demirer et al., 2026)</p></td>
-<td class="treat"></td>
-<td class="num euval"></td>
-<td class="src"></td>
-<td class="just"></td>
-<td><span class="pill open">open</span></td>
+<td class="src"><p>task-level gains in field experiments (Brynjolfsson et al., 2025; Huang et al., 2025; Demirer et al., 2026)</p></td>
+<td class="num euval">0.3 / 0.35 / 0.45<span class="mse">modest / substantial / extreme</span><br><span class="treat retain">retain</span></td>
+<td class="src"><p>Antropic scenario assumptions from field experiments on task-level gains</p></td>
+<td class="just"><p>A property of the technology. The same tool saves the same time on the same task everywhere</p><ul><li>where the EU differs is in how many tasks AI is used on ($d$) and how ($\psi$)</li><li>the evidence of small average time savings (Humlum and Vestergaard 2025, Denmark, about 3% of hours) averages over non-users and unaffected tasks (reflects low $d$ not $a$)</li></ul></td>
+<td><span class="pill decided">decided</span></td>
 </tr>
-<tr class="open" data-status="open" data-key="0" data-todo="0">
-<td class="sym"><i>g</i><sub>a</sub></td>
-<td class="code"><span class="id">g_a</span><span class="loc">Scenario.g_a</span></td>
-<td class="meaning">yearly increase in that productivity gain, in log points</td>
+<tr class="decided" data-status="decided" data-key="0" data-todo="0">
+<td class="code"><span class="sym"><i>g</i><sub>a</sub></span><span class="id">g_a</span><span class="loc">Scenario.g_a</span></td>
+<td class="meaning">yearly increase in the productivity gain where AI is in use (log points)</td>
 <td class="num">0 / 0.028 / 0.1<span class="mse">modest / substantial / extreme</span></td>
 <td class="src"><p>scenario assumptions which imply a_2030 = 0.30 / 0.45 / 0.80</p></td>
-<td class="treat"></td>
-<td class="num euval"></td>
-<td class="src"></td>
-<td class="just"></td>
-<td><span class="pill open">open</span></td>
+<td class="num euval">0 / 0.028 / 0.1<span class="mse">modest / substantial / extreme</span><br><span class="treat retain">retain</span></td>
+<td class="src"><p>Antropic scenario assumptions</p></td>
+<td class="just"><p>The pace at which the technology improves on a task. This is again a property of the technology itself.</p></td>
+<td><span class="pill decided">decided</span></td>
 </tr>
 </tbody></table></div><div class="empty">No rows match the current filter.</div></details>
-<details class="panel" open data-sec="C"><summary><span class="letter">C</span><span class="title">Disruptiveness, automation, new tasks, and search once AI arrives</span><span class="meta"><span class="shown">5</span> of 5 parameters</span><span class="mini"><span class="pill open" title="open">5</span></span><span class="chev">&#9656;</span></summary>
-<div class="wrap"><table><colgroup><col style="width:6%"><col style="width:11%"><col style="width:8%"><col style="width:6%"><col style="width:10%"><col style="width:6%"><col style="width:6%"><col style="width:12%"><col style="width:28%"><col style="width:7%"></colgroup><thead><tr>
-<th>Symbol</th>
-<th>Parameter (code)</th>
+<details class="panel" open data-sec="C"><summary><span class="letter">C</span><span class="title">Disruptiveness, automation, new tasks, and search once AI arrives</span><span class="meta"><span class="shown">5</span> of 5 parameters</span><span class="mini"><span class="pill decided" title="decided">2</span><span class="pill discuss" title="discuss">3</span></span><span class="chev">&#9656;</span></summary>
+<div class="wrap"><table><colgroup><col style="width:10%"><col style="width:9%"><col style="width:6%"><col style="width:10%"><col style="width:7%"><col style="width:19%"><col style="width:32%"><col style="width:7%"></colgroup><thead><tr>
+<th>Parameter</th>
 <th>Meaning</th>
 <th>US value</th>
 <th>US source</th>
-<th>EU treatment</th>
 <th>EU value</th>
 <th>EU source / hint</th>
 <th class="just">Justification</th>
 <th>Status</th>
 </tr></thead><tbody>
-<tr class="open" data-status="open" data-key="0" data-todo="0">
-<td class="sym"><i>ψ</i><sub>t</sub></td>
-<td class="code"><span class="id">psi</span><span class="loc">Scenario.psi</span></td>
-<td class="meaning">share of AI use that replaces the worker on the task (automation) rather than assisting them</td>
+<tr class="discuss key" data-status="discuss" data-key="1" data-todo="0">
+<td class="code"><span class="sym"><span class="star" title="key difference">★</span><i>ψ</i><sub>t</sub></span><span class="id">psi</span><span class="loc">Scenario.psi</span></td>
+<td class="meaning">share of AI use that replaces the worker on the task rather than assisting them (i.e. automation)</td>
 <td class="num">0.5 / 0.75 / 0.9<span class="mse">modest / substantial / extreme</span></td>
-<td class="src"><p>scenario assumptions: on the low end similar to the current automation-like share of use (Appel et al., 2025)</p></td>
-<td class="treat"></td>
-<td class="num euval"></td>
-<td class="src"></td>
-<td class="just"></td>
-<td><span class="pill open">open</span></td>
+<td class="src"><p>modest scenario set to the automation share of Claude conversations in the Anthropic Economic Index (Appel et al. 2025) with assumptions for other scenarios</p></td>
+<td class="num euval">0.25 / 0.5 / 0.75<span class="mse">modest / substantial / extreme</span><br><span class="treat recalibrate">recalibrate</span></td>
+<td class="src"><p>The share of Claude conversations classified as automation rather than augmentation. We aggregate shares across countries to an EU average. This yields 0.46-0.47 vs. US 0.49-0.50 (ratio 0.94). So the automation shares do not differ widely. But we re-interpret what they mean. Computed by compute_values/compute_psi.py; extract in data/aei_automation_by_country.csv. Source: <a href="https://huggingface.co/datasets/Anthropic/EconomicIndex" target="_blank" rel="noopener">https://huggingface.co/datasets/Anthropic/EconomicIndex</a></p></td>
+<td class="just"><p>The automation share is the share of conversations where the user hands the task to Claude and takes its output, rather than getting help with their own work (about half of all conversations). We interpret this less optimistically than Antropic, and consider it closer to an upper bound. The worker still specifies, checks, and iterates on that output. In the model, automation means the worker&#x27;s time on the task goes to zero. So each scenario moves down one step:</p><ul><li>modest 0.25: half the conversation share</li><li>substantial 0.50: the actual conversation share</li><li>extreme 0.75: the API share</li></ul><p>This is also consistent with use being mostly assistive. Humlum and Vestergaard (2025) report just 3% time changes, and Chatterji et al. (2025) note that &#x27;drafting&#x27; is among the most common work done by ChatGPT Alternative is to stick to Antropic&#x27;s 0.50 / 0.75 / 0.90.</p></td>
+<td><span class="pill discuss">discuss</span></td>
 </tr>
-<tr class="open" data-status="open" data-key="0" data-todo="0">
-<td class="sym"><i>ρ</i></td>
-<td class="code"><span class="id">rho</span><span class="loc">Scenario.rho</span></td>
-<td class="meaning">share of the displaced work that comes back as new tasks for workers (reinstatement)</td>
+<tr class="discuss key" data-status="discuss" data-key="1" data-todo="0">
+<td class="code"><span class="sym"><span class="star" title="key difference">★</span><i>ρ</i></span><span class="id">rho</span><span class="loc">Scenario.rho</span></td>
+<td class="meaning">share of the displaced work that comes back as new tasks for workers</td>
 <td class="num">0.5 / 0.25 / 0<span class="mse">modest / substantial / extreme</span></td>
 <td class="src"><p>scenario assumptions: Acemoglu and Restrepo (2019) estimated rho = 0.5</p></td>
-<td class="treat"></td>
-<td class="num euval"></td>
-<td class="src"></td>
-<td class="just"></td>
-<td><span class="pill open">open</span></td>
+<td class="num euval">1 / 0.5 / 0.25<span class="mse">modest / substantial / extreme</span><br><span class="treat recalibrate">recalibrate</span></td>
+<td class="src"><p>In Acemoglu and Restrepo (2019) the share of displaced tasks that gets reinstated = 1 for 1947-87 and 0.5 for 1987-2017. The same decomposition on European data (EU KLEMS) for 2000-2014 yields about 1 (Labaj and Vitalos, 2019). Source: <a href="https://nhf.euba.sk/www_write/files/katedry/khp/working-papers/dep_wp021.pdf" target="_blank" rel="noopener">https://nhf.euba.sk/www_write/files/katedry/khp/working-papers/dep_wp021.pdf</a></p></td>
+<td class="just"><p>Antropic uses the recent US ratio as its upper bound, whereas we are more cautious:</p><ul><li>modest: the historical ratio (= no net displacement)</li><li>substantial: the recent US ratio</li><li>extreme: the &#x27;substantial&#x27; value of Antropic</li><li>this matters: Antropic&#x27;s values yield clearly lower wages and higher unemployment</li></ul></td>
+<td><span class="pill discuss">discuss</span></td>
 </tr>
-<tr class="open" data-status="open" data-key="0" data-todo="0">
-<td class="sym"><i>μ</i></td>
-<td class="code"><span class="id">mu</span><span class="loc">Scenario.mu</span></td>
-<td class="meaning">once AI arrives, how effectively an unemployed worker from the other occupation group competes for a job in this group (1 = as well as insiders; lower = harder to switch)</td>
+<tr class="decided" data-status="decided" data-key="0" data-todo="0">
+<td class="code"><span class="sym"><i>μ</i></span><span class="id">mu</span><span class="loc">Scenario.mu</span></td>
+<td class="meaning">how easily an unemployed worker from the other occupation group gets hired, relative to an insider (1 = as easily, 0.1 = ten times harder)</td>
 <td class="num">0.17 / 0.08 / 0.04<span class="mse">modest / substantial / extreme</span></td>
-<td class="src"><p>scenario assumptions: mu_bar = 0.17 is the value consistent with normal-times occupational switching estimated from CPS</p></td>
-<td class="treat"></td>
-<td class="num euval"></td>
-<td class="src"></td>
-<td class="just"></td>
-<td><span class="pill open">open</span></td>
+<td class="src"><p>Modest is fit such that model reproduces the share of CPS job finders that switch between occupation groups (while substantial and extreme rates are lower)</p></td>
+<td class="num euval">0.17 / 0.08 / 0.04<span class="mse">modest / substantial / extreme</span><br><span class="treat retain">retain</span></td>
+<td class="src"><p>Antropic values are mu_bar scaled by retraining time ($\mu = \bar \mu \times 3 / \text{months}$). The modest scenario assumes 3 months (= 0.17), substantial 6 months (= 0.08) and extreme 13 months (= 0.04). The EU mu_bar (Section D) is kept at 0.17 because EU-SILC gives the same switching share as the CPS.</p><p>Source: Bachmann, Bechara and Vonnahme (2020), <a href="https://doi.org/10.1007/s10645-019-09355-9" target="_blank" rel="noopener">https://doi.org/10.1007/s10645-019-09355-9</a></p></td>
+<td class="just"><p>Retraining time is a property of the scenario. We keep Antropic&#x27;s months but with the EU mu_bar. Some notes:</p><ul><li>could be shorter: EU spends more on training / ALMP</li><li>but there is no evidence to pin the difference in retraining time down so kept unchanged</li></ul></td>
+<td><span class="pill decided">decided</span></td>
 </tr>
-<tr class="open" data-status="open" data-key="0" data-todo="0">
-<td class="sym"><i>θ</i><sub>H</sub></td>
-<td class="code"><span class="id">theta_H</span><span class="loc">Scenario.theta_H</span></td>
-<td class="meaning">speed at which firms post the jobs that AI creates or frees up, per month</td>
+<tr class="decided" data-status="decided" data-key="0" data-todo="0">
+<td class="code"><span class="sym"><i>θ</i><sub>H</sub></span><span class="id">theta_H</span><span class="loc">Scenario.theta_H</span></td>
+<td class="meaning">how fast firms post vacancies for the extra workers they want</td>
 <td class="num">0.1 / 0.25 / 0.5<span class="mse">modest / substantial / extreme</span></td>
 <td class="src"><p>scenario assumptions</p></td>
-<td class="treat"></td>
-<td class="num euval"></td>
-<td class="src"></td>
-<td class="just"></td>
-<td><span class="pill open">open</span></td>
+<td class="num euval">0.1 / 0.25 / 0.5<span class="mse">modest / substantial / extreme</span><br><span class="treat retain">retain</span></td>
+<td class="src"><p>Antropic scenario assumption. The share of the hiring gap that firms post as vacancies each month (0.10 = half of a new demand is posted within 7 months, 0.25 within 2.5 months, 0.50 within 1 month). There is no empirical counterpart; we take their value for now.</p></td>
+<td class="just"><p>A pure scenario parameter that paces the reorganisation. Could be different for Europe:</p><ul><li>stricter employment protection slows job creation</li><li>but slows layoffs as much and model has no layoff frictions</li><li>lowering theta_H would bias the EU towards more unemployment because layoff frictions are not changed</li></ul></td>
+<td><span class="pill decided">decided</span></td>
 </tr>
-<tr class="open" data-status="open" data-key="0" data-todo="0">
-<td class="sym"><i>ξ</i></td>
-<td class="code"><span class="id">xi</span><span class="loc">Calibration.xi</span></td>
-<td class="meaning">stickiness of the cognitive wage: the fraction of its gap to the market-clearing level that still remains after a year (0.5 = half; higher = stickier)</td>
+<tr class="discuss key" data-status="discuss" data-key="1" data-todo="0">
+<td class="code"><span class="sym"><span class="star" title="key difference">★</span><i>ξ</i></span><span class="id">xi</span><span class="loc">Calibration.xi</span></td>
+<td class="meaning">stickiness of the cognitive wage (how much of its excess over the market-clearing level is still there after a year: 0.5 = half; higher = stickier)</td>
 <td class="num">0.5</td>
 <td class="src"><p>wage-setting evidence (Section 3.4)</p></td>
-<td class="treat"></td>
-<td class="num euval"></td>
-<td class="src"></td>
-<td class="just"></td>
-<td><span class="pill open">open</span></td>
+<td class="num euval">0.6<br><span class="treat recalibrate">recalibrate</span></td>
+<td class="src"><p>Wages in Europe change every +- 15 months on average and relative pay is fixed in collective agreements covering about 60% of workers. In the US wages change faster, every +- 12 months, and only 12% of workers are covered by collective agreements.</p><p>Sources: Druant et al. (2009), Barattieri et al. (2014), OECD/AIAS ICTWSS database, <a href="https://www.oecd.org/en/data/datasets/ecdaias-ictwss-database.html" target="_blank" rel="noopener">https://www.oecd.org/en/data/datasets/ecdaias-ictwss-database.html</a></p></td>
+<td class="just"><p>This captures the persistence of cognitive wages above their market-clearing level. Wages change less often in Europe, so the value should be higher than in the US.</p><ul><li>if a wage is reset once every T months, the share of a gap still left after a year is (1 - 1/T)^12</li><li>this yields 0.35 at 12 months and 0.44 at 15 months; scaling Antropic&#x27;s 0.5 by 0.44/0.35 yields 0.6</li><li>likely a lower bound because collective agreements add additional drag, so could also check 0.7</li><li>this parameter matters: a stickier cognitive wage protects cognitive pay but raises cognitive unemployment</li></ul></td>
+<td><span class="pill discuss">discuss</span></td>
 </tr>
 </tbody></table></div><div class="empty">No rows match the current filter.</div></details>
-<details class="panel" open data-sec="D"><summary><span class="letter">D</span><span class="title">The labor market in normal times</span><span class="meta"><span class="shown">7</span> of 7 parameters</span><span class="mini"><span class="pill open" title="open">7</span></span><span class="chev">&#9656;</span></summary>
-<div class="wrap"><table><colgroup><col style="width:6%"><col style="width:11%"><col style="width:8%"><col style="width:6%"><col style="width:10%"><col style="width:6%"><col style="width:6%"><col style="width:12%"><col style="width:28%"><col style="width:7%"></colgroup><thead><tr>
-<th>Symbol</th>
-<th>Parameter (code)</th>
+<details class="panel" open data-sec="D"><summary><span class="letter">D</span><span class="title">The labor market in normal times</span><span class="meta"><span class="shown">7</span> of 7 parameters</span><span class="mini"><span class="pill decided" title="decided">4</span><span class="pill discuss" title="discuss">3</span></span><span class="chev">&#9656;</span></summary>
+<div class="wrap"><table><colgroup><col style="width:10%"><col style="width:9%"><col style="width:6%"><col style="width:10%"><col style="width:7%"><col style="width:19%"><col style="width:32%"><col style="width:7%"></colgroup><thead><tr>
+<th>Parameter</th>
 <th>Meaning</th>
 <th>US value</th>
 <th>US source</th>
-<th>EU treatment</th>
 <th>EU value</th>
 <th>EU source / hint</th>
 <th class="just">Justification</th>
 <th>Status</th>
 </tr></thead><tbody>
-<tr class="open" data-status="open" data-key="0" data-todo="0">
-<td class="sym"><i>q̄</i></td>
-<td class="code"><span class="id">q_bar_annual</span><span class="loc">Calibration.q_bar_annual</span></td>
-<td class="meaning">share of employed workers who quit their job in a normal year</td>
+<tr class="discuss" data-status="discuss" data-key="0" data-todo="0">
+<td class="code"><span class="sym"><i>q̄</i></span><span class="id">q_bar_annual</span><span class="loc">Calibration.q_bar_annual</span></td>
+<td class="meaning">share of employed workers who move into unemployment in a normal year</td>
 <td class="num">0.11</td>
-<td class="src"><p>implied by the pool and the CPS finding rate, rounded (Section 3.2)</p></td>
-<td class="treat"></td>
-<td class="num euval"></td>
-<td class="src"></td>
-<td class="just"></td>
-<td><span class="pill open">open</span></td>
+<td class="src"><p>derived from CPS as separation rate that keeps the 3.8% unemployed rate constant at monthly job finding rate of 21.9%</p></td>
+<td class="num euval">0.057<br><span class="treat recalculate">recalculate</span></td>
+<td class="src"><p>We use the same identity with EU values. A monthly job finding rate $f = 0.099$ from Eurostat quarterly transitions (EU-27 over 2022-2025, converted to monthly following Shimer 2012) and $\bar U = 0.046$. Computed by compute_values/compute_flows.py; extract in data/eurostat_lfsi_long_q_EU27_2015_2025.json. Source: <a href="https://ec.europa.eu/eurostat/databrowser/view/lfsi_long_q" target="_blank" rel="noopener">https://ec.europa.eu/eurostat/databrowser/view/lfsi_long_q</a></p></td>
+<td class="just"><p>Europeans separate into unemployment half as often and leave it half as fast</p><ul><li>this is in line with e.g. Elsby et al. (2013)</li><li>effect in the model is that slower flows in both directions roughly cancel; the rise in unemployment from AI is slightly smaller</li></ul></td>
+<td><span class="pill discuss">discuss</span></td>
 </tr>
-<tr class="open" data-status="open" data-key="0" data-todo="0">
-<td class="sym"><i>q</i><sup>T</sup><sub>o</sub> <i>/</i> <i>q̄</i><sub>o</sub></td>
-<td class="code"><span class="id">q_T_share</span><span class="loc">Calibration.q_T_share</span></td>
-<td class="meaning">share of those quits that responds to how easy it is to find another job</td>
+<tr class="decided" data-status="decided" data-key="0" data-todo="0">
+<td class="code"><span class="sym"><i>q</i><sup>T</sup><sub>o</sub> <i>/</i> <i>q̄</i><sub>o</sub></span><span class="id">q_T_share</span><span class="loc">Calibration.q_T_share</span></td>
+<td class="meaning">how much separations fall when jobs become harder to find</td>
 <td class="num">0.55</td>
-<td class="src"><p>elasticity of JOLTS quits to the CPS finding rate (U.S. Bureau of Labor Statistics, 2026a) (Section 3.2)</p></td>
-<td class="treat"></td>
-<td class="num euval"></td>
-<td class="src"></td>
-<td class="just"></td>
-<td><span class="pill open">open</span></td>
+<td class="src"><p>elasticity of JOLTS quits to the CPS finding rate</p></td>
+<td class="num euval">0.55<br><span class="treat retain">retain</span></td>
+<td class="src"><p>Antropic&#x27;s elasticity of quits to the job-finding rate (JOLTS quits on CPS flows). Europe has no quits survey comparable to JOLTS.</p></td>
+<td class="just"><p>This reflects the share of the normal separation rate that moves in proportion to the job-finding rate. A value of 0.55 reflects that, if job finding halves, separations fall by 27%. There is no EU value for this elasticity, so we keep it.</p></td>
+<td><span class="pill decided">decided</span></td>
 </tr>
-<tr class="open" data-status="open" data-key="0" data-todo="0">
-<td class="sym"><i>q̄</i><sub>C</sub> <i>/</i> <i>q̄;</i> <i>q̄</i><sub>N</sub> <i>/</i> <i>q̄</i></td>
-<td class="code"><span class="id">sep_rel</span><span class="loc">Calibration.sep_rel (property; from Calibration.hazards, or Calibration.sep_rel_override)</span></td>
-<td class="meaning">how much more or less often each group separates into unemployment than the average worker (cognitive, other)</td>
+<tr class="discuss" data-status="discuss" data-key="0" data-todo="0">
+<td class="code"><span class="sym"><i>q̄</i><sub>C</sub> <i>/</i> <i>q̄;</i> <i>q̄</i><sub>N</sub> <i>/</i> <i>q̄</i></span><span class="id">sep_rel</span><span class="loc">Calibration.sep_rel</span></td>
+<td class="meaning">how much more or less often each group separates into unemployment than the average worker (cognitive, all other)</td>
 <td class="num">cognitive 0.69; other 1.52</td>
 <td class="src"><p>IPUMS-CPS 2010-19 (Flood et al., 2025)</p></td>
-<td class="treat"></td>
-<td class="num euval"></td>
-<td class="src"></td>
-<td class="just"></td>
-<td><span class="pill open">open</span></td>
+<td class="num euval">cognitive 0.734; other 1.423<br><span class="treat recalculate">recalculate</span></td>
+<td class="src"><p>Eurostat unemployed by occupation of the last job over employment by occupation. For each group relative to the average. Cognitive = ISCO 1-4 plus 52; group 5 is published at 1-digit only and is split by the employment share of 52 (0.42). Computed by compute_values/compute_flows.py; extract in data/eurostat_lfsa_ugpis_EU27_2015_2025.json.</p><p>Source: <a href="https://ec.europa.eu/eurostat/databrowser/view/lfsa_ugpis" target="_blank" rel="noopener">https://ec.europa.eu/eurostat/databrowser/view/lfsa_ugpis</a></p></td>
+<td class="just"><p>Antropic uses monthly E-to-U flows by group. Eurostat publishes no flows by occupation, so we use the stock of unemployed by last occupation relative to employment. This equals the flow ratio if spells last equally long in both groups.</p><ul><li>close to Antropic values: other occupations separate about twice as often</li><li>if cognitive spells are shorter the stock understates the gap (small effect)</li></ul></td>
+<td><span class="pill discuss">discuss</span></td>
 </tr>
-<tr class="open" data-status="open" data-key="0" data-todo="0">
-<td class="sym"><i>Ū</i></td>
-<td class="code"><span class="id">U_bar</span><span class="loc">Calibration.U_bar</span></td>
-<td class="meaning">share of the labour force unemployed and searching in normal times (with a previous job)</td>
+<tr class="decided" data-status="decided" data-key="0" data-todo="0">
+<td class="code"><span class="sym"><i>Ū</i></span><span class="id">U_bar</span><span class="loc">Calibration.U_bar</span></td>
+<td class="meaning">share of the labour force unemployed but had a previous job that is searching in normal times</td>
 <td class="num">0.038</td>
 <td class="src"><p>CPS 2025 (U.S. Bureau of Labor Statistics, 2026b)</p></td>
-<td class="treat"></td>
-<td class="num euval"></td>
-<td class="src"></td>
-<td class="just"></td>
-<td><span class="pill open">open</span></td>
+<td class="num euval">0.046<br><span class="treat recalculate">recalculate</span></td>
+<td class="src"><p>Same definition as Antropic&#x27;s: unemployed with a previous job over civilian employment plus them. Eurostat EU-27 2025: unemployed with a job in the last 8 years 9.95 million, employment 206.5 million. Computed by compute_values/compute_flows.py.</p><p>Source: <a href="https://ec.europa.eu/eurostat/databrowser/view/lfsa_ugpis" target="_blank" rel="noopener">https://ec.europa.eu/eurostat/databrowser/view/lfsa_ugpis</a></p></td>
+<td class="just"><p>EU unemployment is higher, partly offset by a larger share of new entrants, who are not in the pool.</p><ul><li>sets the normal unemployment rate the model starts from</li><li>the AI effects come on top of it</li></ul></td>
+<td><span class="pill decided">decided</span></td>
 </tr>
-<tr class="open" data-status="open" data-key="0" data-todo="0">
-<td class="sym"><i>μ̄</i></td>
-<td class="code"><span class="id">mu_bar</span><span class="loc">Calibration.mu_bar</span></td>
+<tr class="decided" data-status="decided" data-key="0" data-todo="1">
+<td class="code"><span class="sym"><i>μ̄</i></span><span class="id">mu_bar</span><span class="loc">Calibration.mu_bar</span></td>
 <td class="meaning">in normal times, how effectively an unemployed worker competes for jobs in the other occupation group, set to match observed occupational switching</td>
 <td class="num">0.17</td>
 <td class="src"><p>CPS 2010-19 switching matrix from the replication files of Carrillo-Tudela and Visschers (2023b), corrected by their method (Section 3.2)</p></td>
-<td class="treat"></td>
-<td class="num euval"></td>
-<td class="src"></td>
-<td class="just"></td>
-<td><span class="pill open">open</span></td>
+<td class="num euval">0.17<br><span class="treat retain">retain</span></td>
+<td class="src"><p>Computed from EU-SILC longitudinal files 2005-2019. About 20% changed occupational group; 16% if we apply the same miscoding error. This would make mu_bar 0.19. Since SILC overstates switches due to 2 year window, we just retain 0.17. Computed by compute_values/compute_mu_bar_silc.R; result in data/silc_switching_shares.csv.</p><p>Source: EU-SILC longitudinal microdata (Eurostat), ISCO 1-4 plus 52 = cognitive</p></td>
+<td class="just"><p>Yields about the same share as Antropic. But occupational switching is a questionable proxy:</p><ul><li>could be larger in reality, as observed switching reflects workers&#x27; choices (preferences, built-up human capital) as well as hiring constraints</li></ul></td>
+<td><span class="pill decided">decided</span><br><span class="pill todo">to-do</span><div class="todo-text">refine with the SILC monthly calendar (one-year window with an observed unemployment spell; definition (b) in compute_mu_bar_silc.R)</div></td>
 </tr>
-<tr class="open" data-status="open" data-key="0" data-todo="0">
-<td class="sym"><i>ι</i></td>
-<td class="code"><span class="id">iota</span><span class="loc">Calibration.iota</span></td>
+<tr class="decided" data-status="decided" data-key="0" data-todo="0">
+<td class="code"><span class="sym"><i>ι</i></span><span class="id">iota</span><span class="loc">Calibration.iota</span></td>
 <td class="meaning">shape of the matching function: how sharply the chance of filling a vacancy falls as vacancies outnumber searchers</td>
 <td class="num">1.27</td>
 <td class="src"><p>den Haan et al. (2000)</p></td>
-<td class="treat"></td>
-<td class="num euval"></td>
-<td class="src"></td>
-<td class="just"></td>
-<td><span class="pill open">open</span></td>
+<td class="num euval">1.27<br><span class="treat retain">retain</span></td>
+<td class="src"><p>den Haan, Ramey and Watson (2000), US estimate; no EU estimate of this matching function at the monthly frequency.</p></td>
+<td class="just"><p>A shape parameter, kept at Antropic&#x27;s value. The level of matching efficiency is re-solved from the EU flows and the EU vacancy filling rate, so only the curvature is taken from the US.</p></td>
+<td><span class="pill decided">decided</span></td>
 </tr>
-<tr class="open" data-status="open" data-key="0" data-todo="0">
-<td class="sym"><i>π̄</i><sub>o</sub></td>
-<td class="code"><span class="id">pi_bar_mean</span><span class="loc">Calibration.pi_bar_mean</span></td>
+<tr class="discuss" data-status="discuss" data-key="0" data-todo="0">
+<td class="code"><span class="sym"><i>π̄</i><sub>o</sub></span><span class="id">pi_bar_mean</span><span class="loc">Calibration.pi_bar_mean</span></td>
 <td class="meaning">share of vacancies filled within a month in normal times</td>
 <td class="num">0.65</td>
 <td class="src"><p>JOLTS 2010-19, computed using the method of Davis et al. (2013)</p></td>
-<td class="treat"></td>
-<td class="num euval"></td>
-<td class="src"></td>
-<td class="just"></td>
-<td><span class="pill open">open</span></td>
+<td class="num euval">0.45<br><span class="treat recalculate">recalculate</span></td>
+<td class="src"><p>Same logic: the daily filling rate is hires per working day over the vacancy stock. The share filled within a month follows over 26 days. EU-27 2022-2025: vacancy rate 2.6% (Eurostat JVS, B-S) on 183 million occupied posts gives 5.0 million vacancies. There are 2.8 million hires a month (employed with job tenure under 3 months, Eurostat LFS, divided by 3). The daily fill 2.2% is 0.43 within a month, 0.44 scaled to Antropic&#x27;s exact method (which gives 0.65 where this simple version gives 0.63 on JOLTS). Computed by compute_values/compute_vacancy_filling.py; extracts in data/ (eurostat_jvs_q_nace2, eurostat_lfsq_egdn2, eurostat_namq_10_a10_e, fred_JTSHIL, fred_JTSJOL).</p><p>Source: <a href="https://ec.europa.eu/eurostat/databrowser/view/jvs_q_nace2" target="_blank" rel="noopener">https://ec.europa.eu/eurostat/databrowser/view/jvs_q_nace2</a> and lfsq_egdn2</p></td>
+<td class="just"><p>Vacancies take longer to fill in Europe: fewer hires per vacancy (hires 1.5% of employment a month against 3.6% in the US, vacancies 2.6% against 3.5%).</p><ul><li>the hires proxy misses starts that ended before the interview, so 0.45 is on the low side; 0.50 is plausible</li><li>small effect: 0.45 against 0.65 adds 0.4 points to extreme 2030 unemployment and 0.06 to substantial</li></ul></td>
+<td><span class="pill discuss">discuss</span></td>
 </tr>
 </tbody></table></div><div class="empty">No rows match the current filter.</div></details>
-<footer>38 parameters. 18 decided, 4 discuss, 16 open. Collapsed panels and filters are remembered in this browser.</footer>
 </div><script>
 (function(){
   var KEY = 'calib-table-state';

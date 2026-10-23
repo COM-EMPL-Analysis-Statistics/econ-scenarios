@@ -15,14 +15,19 @@ Inputs, all in european_values/data/:
   ibs_soc10_isco08.dta       SOC 2010 to ISCO-08 (4-digit) crosswalk, IBS Warsaw
                              (ibs.org.pl, onetsoc_to_isco_cws_ibs-2.zip)
   eurostat_lfsa_egai2d_EU27_2024_2025.json   EU-27 employment by ISCO-08 2-digit group
+  eulfs_employment_isco3d_2024.csv           EU-27 employment by ISCO-08 3-digit group, from the
+                             EU-LFS yearly microdata 2024 (compute_isco3d_lfs.R)
 
 Method. O*NET-SOC codes are truncated to 6-digit SOC and ratings averaged within a SOC. Each
 SOC is spread equally over the ISCO 2-digit groups the crosswalk maps it to. A group's rating
 is the US-employment-weighted mean of the SOCs in it. The EU value is the EU-employment-weighted
 mean of the group ratings. The US value computed the same way (through groups) equals the
 direct US value up to the crosswalk's many-to-many splits, which measures the approximation.
-Public EU data stop at 2-digit ISCO, so the EU weights act on the between-group mix only, which
-is where the US-EU difference lives.
+Public EU data stop at 2-digit ISCO, so with them the EU weights act on the between-group mix
+only. The EU-LFS microdata give the mix at 3 digits (the finest level in the scientific-use
+files); the same steps at 3 digits make the within-group mix European too, and that run is the
+one the table uses. Residual codes ending in 0 (occupation stated at 1 or 2 digits only, about
+half a percent of employment) and the armed forces are left out of the 3-digit weights.
 
 Run from the repository root:  uv run python european_values/compute_values/compute_exposure.py
 """
@@ -57,6 +62,13 @@ def eu_employment(year: str = "2025") -> pd.Series:
     return pd.Series(two_digit, name="eu_emp").sort_index()
 
 
+def eu_employment3() -> pd.Series:
+    """EU-27 employment by ISCO 3-digit minor group from the LFS microdata, thousand persons."""
+    d = pd.read_csv(DATA / "eulfs_employment_isco3d_2024.csv", dtype={"isco3d": str, "isco2d": str})
+    d = d[d["employment_ths"].notna() & ~d["isco3d"].str.endswith("0") & (d["isco3d"].str[0] != "0")]
+    return d.set_index("isco3d")["employment_ths"].rename("eu_emp").sort_index()
+
+
 def main() -> None:
     occ = pd.read_csv(DATA / "eloundou_occ_level.csv")
     occ["soc"] = occ["O*NET-SOC Code"].str[:7].str.replace("-", "", regex=False)
@@ -87,31 +99,36 @@ def main() -> None:
 
     cw = pd.read_stata(DATA / "ibs_soc10_isco08.dta")
     cw["soc"] = cw["soc10"].astype(str).str.zfill(6)
-    cw["isco2"] = cw["isco08"].astype(str).str.zfill(4).str[:2]
-    cw = cw[["soc", "isco2"]].drop_duplicates()
-    cw["w"] = 1.0 / cw.groupby("soc")["isco2"].transform("count")
-    spread = us.merge(cw, on="soc", how="inner")
-    matched = spread.drop_duplicates("soc")["emp"].sum() / us["emp"].sum()
-    spread["emp_w"] = spread["emp"] * spread["w"]
-    groups = spread.groupby("isco2").apply(lambda g: wmean(g, "emp_w"), include_groups=False)
-    groups["us_emp"] = spread.groupby("isco2")["emp_w"].sum()
-    groups = groups[groups.index != "01"]  # armed forces, outside the civilian comparison
+    cw["isco4"] = cw["isco08"].astype(str).str.zfill(4)
 
-    eu = eu_employment()
-    groups = groups.join(eu, how="left")
-    missing = groups[groups["eu_emp"].isna()].index.tolist()
-    groups["eu_emp"] = groups["eu_emp"].fillna(0.0)
-    us_via_groups = wmean(groups, "us_emp")
-    eu_value = wmean(groups, "eu_emp")
-    eu_cover = groups["eu_emp"].sum() / eu.sum()
+    def by_group(digits: int, eu: pd.Series) -> tuple[pd.DataFrame, float, list[str], pd.Series, pd.Series, float]:
+        """Group ratings at ``digits`` of ISCO, US and EU weighted means, and the EU coverage."""
+        c = cw.assign(isco=cw["isco4"].str[:digits])[["soc", "isco"]].drop_duplicates()
+        c["w"] = 1.0 / c.groupby("soc")["isco"].transform("count")
+        spread = us.merge(c, on="soc", how="inner")
+        matched = spread.drop_duplicates("soc")["emp"].sum() / us["emp"].sum()
+        spread["emp_w"] = spread["emp"] * spread["w"]
+        groups = spread.groupby("isco").apply(lambda g: wmean(g, "emp_w"), include_groups=False)
+        groups["us_emp"] = spread.groupby("isco")["emp_w"].sum()
+        groups = groups[groups.index.str[0] != "0"]  # armed forces, outside the civilian comparison
+        groups = groups.join(eu, how="left")
+        missing = groups[groups["eu_emp"].isna()].index.tolist()
+        groups["eu_emp"] = groups["eu_emp"].fillna(0.0)
+        return groups, matched, missing, wmean(groups, "us_emp"), wmean(groups, "eu_emp"), groups["eu_emp"].sum() / eu.sum()
+
+    eu2, eu3 = eu_employment(), eu_employment3()
+    groups, matched, missing, us_via_groups, eu_value2, eu_cover2 = by_group(2, eu2)
+    groups3, matched3, missing3, us_via_groups3, eu_value, eu_cover3 = by_group(3, eu3)
 
     print(f"US occupations matched to ratings: {cover:.1%} of OEWS employment; to the crosswalk: {matched:.1%}")
-    print(f"EU employment covered by groups with a rating: {eu_cover:.1%}" + (f" (no US occupation maps to {missing})" if missing else ""))
-    print(f"\n{'employment-weighted mean exposure':<36}{'US direct':>11}{'US via ISCO':>13}{'EU-27 2025':>12}{'EU / US':>9}")
+    print(f"EU employment covered by groups with a rating: {eu_cover2:.1%} at 2 digits" + (f" (rated groups without EU employment: {missing})" if missing else "")
+          + f", {eu_cover3:.1%} at 3 digits" + (f" ({len(missing3)} rated minor groups without EU employment)" if missing3 else ""))
+    print(f"\n{'employment-weighted mean exposure':<36}{'US direct':>11}{'US via ISCO':>13}{'EU 2-digit':>12}{'EU 3-digit':>12}{'EU / US':>9}")
     labels = {f"{r}_rating_{m}": f"{'GPT-4' if r == 'dv' else 'human'} ratings, {m}" for r in RATERS for m in MEASURES}
     labels["anthropic_observed"] = "Anthropic observed exposure (2026)"
     for c, label in labels.items():
-        print(f"{label:<36}{us_direct[c]:>11.3f}{us_via_groups[c]:>13.3f}{eu_value[c]:>12.3f}{eu_value[c] / us_via_groups[c]:>9.3f}")
+        print(f"{label:<36}{us_direct[c]:>11.3f}{us_via_groups3[c]:>13.3f}{eu_value2[c]:>12.3f}{eu_value[c]:>12.3f}{eu_value[c] / us_via_groups3[c]:>9.3f}")
+    print("(US via ISCO and EU / US use the 3-digit run; the 2-digit column is the earlier public-data result)")
     print("\nAntropic m_2030 (modest / substantial / extreme): 0.2 / 0.3 / 0.5, read off the human alpha / beta / gamma means;")
     print("Antropic m_anchor: 0.14, the observed exposure averaged over occupations.")
     print("\nISCO 2-digit groups, human beta rating and employment shares (US via crosswalk, EU-27 2025):")

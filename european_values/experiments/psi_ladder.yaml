@@ -1,0 +1,10 @@
+# psi ladder: the automation share of AI use from mild to extreme, on the EU baseline.
+# psi is on 'discuss'; Antropic's rungs (0.50 / 0.75 / 0.90) start from the Claude.ai conversation
+# share, which we read as an upper bound. Each sweep value is applied to all three scenarios, so
+# the table shows the psi ladder crossed with the other scenario settings (m_2030, d_2030, rho,
+# mu, theta_H). To be narrowed back to three rungs once the results are in.
+name: psi ladder
+description: automation share at 0.15 (mild), 0.25 (baseline modest), 0.50, 0.75 and 0.90
+base: eu
+sweep:
+  psi: [0.15, 0.25, 0.50, 0.75, 0.90]

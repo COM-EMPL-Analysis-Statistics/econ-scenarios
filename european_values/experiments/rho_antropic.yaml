@@ -1,0 +1,7 @@
+# rho: the EU baseline uses 1 / 0.5 / 0.25 (historical ratio, recent US ratio, Antropic's
+# substantial). This variant runs Antropic's own 0.5 / 0.25 / 0 on the EU baseline.
+name: rho Antropic
+description: reinstatement share at Antropic's 0.5 / 0.25 / 0 instead of 1 / 0.5 / 0.25
+base: eu
+overrides:
+  rho: {modest: 0.5, substantial: 0.25, extreme: 0.0}

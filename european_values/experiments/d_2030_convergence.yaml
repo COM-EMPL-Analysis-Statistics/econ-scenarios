@@ -1,0 +1,8 @@
+# d_2030: the EU baseline carries the mid-2026 adoption gap to 2030 (0.12 / 0.24 / 0.36, 0.6 of
+# Antropic). This variant closes the gap: the EU reaches Antropic's 2030 values from its lower
+# anchor, i.e. faster diffusion in 2026-2030 than in the US.
+name: d_2030 convergence
+description: EU adoption converges to Antropic's 2030 values (0.2 / 0.4 / 0.6) from the EU anchor of 0.06
+base: eu
+overrides:
+  d_2030: {modest: 0.2, substantial: 0.4, extreme: 0.6}
