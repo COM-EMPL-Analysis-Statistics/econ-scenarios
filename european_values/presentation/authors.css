@@ -1,6 +1,12 @@
 /* Tables: smaller text so each row stays on one line; the pptx has its own sizing. */
 .reveal table {
   font-size: 0.75em;
+  margin-left: auto;
+  margin-right: auto;
+}
+.reveal table td {
+  padding-top: 0.15em;
+  padding-bottom: 0.15em;
 }
 
 /* Title slide: one author per line, each on its own yellow bar, with a gap between them. */
@@ -9,3 +15,17 @@
   width: fit-content;
   margin-bottom: 0.5em !important;
 }
+
+/* Group rows in the parameter tables: a bold label alone in the first cell marks a group
+   (Use of AI, Effect on tasks, Finding new jobs, Today). Shown as a slim tinted band. */
+.reveal table tr:has(> td:first-child strong) > td {
+  padding-top: 0.05em;
+  padding-bottom: 0.05em;
+  background-color: #e9eef8 !important;
+  font-size: 0.9em;
+  white-space: nowrap;
+}
+
+/* EU values below / above the US value: light red / light green cell (html only; pptx ignores spans). */
+.reveal table td:has(> .lower)  { background-color: #f8d7da !important; }
+.reveal table td:has(> .higher) { background-color: #d4edda !important; }

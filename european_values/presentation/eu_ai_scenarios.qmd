@@ -16,9 +16,10 @@ format:
   - to a large-scale transformation
 - Antropic built a model that turns a few assumptions into measurable outcomes
   - in particular: paths for GDP / wages / unemployment by 2030
-- We build on their model in two ways:
+- We change their model in two ways:
   - set the parameters to reflect our labor market
-  - adjust the assumptions on what AI can *already* (and *will*) do
+  - adjust the assumptions on what AI can *already* and *will be able to* do
+    - disclaimer: scenarios to explore and not forecasts
 
 ## Model {.section}
 
@@ -29,44 +30,59 @@ format:
 
 ## Scenarios {.section}
 
-## What each scenario sets for 2030
+## What Scenarios Set for 2030
 
 +----------------------+--------------------------------------------------------------+
-| **Capability**       | share of work AI can do (replacing or assisting)             |
+| **Use of AI**        |                                                              |
 +----------------------+--------------------------------------------------------------+
-| **Adoption**         | share of that actually done with AI                          |
+| Capability           | share of work AI can do (replacing or assisting)             |
 +----------------------+--------------------------------------------------------------+
-| **Automation**       | share where AI replaces workers                              |
+| Adoption             | share of that actually done with AI                          |
 +----------------------+--------------------------------------------------------------+
-| **New tasks**        | share of displaced work returning as new tasks               |
+| **Effect on tasks**  |                                                              |
 +----------------------+--------------------------------------------------------------+
-| **Gain per task**    | how much faster AI does a task                               |
+| Automation           | share where AI replaces workers                              |
 +----------------------+--------------------------------------------------------------+
-| *Today*              | *Same in all scenarios:*                                     |
-|                      |                                                              |
-|                      | • *AI can do 14% of all work (EU: 12%)*                      |
-|                      |                                                              |
-|                      | • *of that work, 10% is actually done with AI (EU: 6%)*      |
+| New tasks            | share of displaced work returning as new tasks               |
++----------------------+--------------------------------------------------------------+
+| Gain per task        | how much faster AI does a task                               |
++----------------------+--------------------------------------------------------------+
+| **Finding new jobs** |                                                              |
++----------------------+--------------------------------------------------------------+
+| Switching            | how easily displaced workers get hired in other jobs         |
++----------------------+--------------------------------------------------------------+
+| Hiring speed         | how quickly firms post vacancies for the workers they want   |
++----------------------+--------------------------------------------------------------+
+| **Today**            | *same in all scenarios*                                      |
++----------------------+--------------------------------------------------------------+
+| Capability           | AI can do 14% of all work (EU: 12%)                          |
++----------------------+--------------------------------------------------------------+
+| Adoption             | of that work, 10% is actually done with AI (EU: 6%)          |
 +----------------------+--------------------------------------------------------------+
 
 ## Scenario Assumptions
 
 | | US | EU | why |
-|-----|-----|-----|-----------|
-| capability 2030 | 20 / 30 / 50% | 18 / 28 / 48% | occupation mix |
-| adoption 2030 | 20 / 40 / 60% | 12 / 24 / 36% | lower start carried forward |
-| automation | 50 / 75 / 90% | 25 / 50 / 75% | usage share is an upper bound |
-| new tasks | 50 / 25 / 0% | 75 / 50 / 25% | EU evidence |
-| gain per task | 35 / 42 / 57% | same | property of the tool |
+|----------------------------------|------------------------------------------|-----------------------------------|-----------------------------------------------------------------------------------------|
+| **Use of AI** | | | |
+| Capability | 20 / 30 / 50% | [18 / 28 / 48%]{.lower} | occupation mix |
+| Adoption | 20 / 40 / 60% | [12 / 24 / 36%]{.lower} | lower start carried forward |
+| **Effect on tasks** | | | |
+| Automation | 50 / 75 / 90% | [25 / 50 / 75%]{.lower} | data counts iterations as automation |
+| New tasks | 50 / 25 / 0% | [75 / 50 / 25%]{.higher} | historically: more new tasks |
+| Gain per task | 35 / 42 / 57% | same | property of the tool |
+| **Finding new jobs** | | | |
+| Switching | 3 / 6 / 13 months | same | no differences in retraining time |
+| Hiring speed | 7 / 2.5 / 1 months | same | no data to estimate |
 
 ## The European economy
 
 | | US | EU |
 |---|---|---|
-| unemployment | 3.8% | 4.6% |
-| monthly job-finding rate | 22% | 10% |
-| annual quits | 11% | 6% |
-| wage stickiness | 0.5 | 0.7 |
+| unemployment | 3.8% | [4.6%]{.higher} |
+| monthly job-finding rate | 22% | [10%]{.lower} |
+| annual quits | 11% | [6%]{.lower} |
+| wage stickiness | 0.5 | [0.7]{.higher} |
 
 ## Results {.section}
 Labour Market in 2030 (relative to no-AI)
@@ -97,6 +113,10 @@ Labour Market in 2030 (relative to no-AI)
 
 ![](../output/figures/labor_share.png){fig-align="center" width="100%"}
 
+## What if Europe caught up on adoption?
+
+![](../output/figures/convergence.png){fig-align="center" width="100%"}
+
 ## Takeaways
 
 - Same scenarios in European labour market: **similar gains, more unemployment**
@@ -105,6 +125,8 @@ Labour Market in 2030 (relative to no-AI)
   - more new tasks and less automation protect cognitive workers
   - most of the gap is adoption: Europe starts lower and does not catch up
 - Adoption as an important lever
+  - catching up with US adoption by 2030: gains up by two thirds, cognitive wages still rise
+  - but in the extreme scenario unemployment then approaches the US level
   - ongoing work on why adoption differs so much across countries
 - These parameters are uncertain and open for debate
   - automation share, new tasks and the adoption path are judgement calls

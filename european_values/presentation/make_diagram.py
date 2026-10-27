@@ -71,11 +71,14 @@ def main() -> None:
     box(ax, X[3], y_c, "Outcomes in 2030", EC_ORANGE, note="GDP, wages, unemployment")
 
     # Top branch: assisting.
-    box(ax, X[1], Y_TOP, "AI assists workers", LIGHT_BLUE, note="share 1 − ψ")
-    box(ax, X[2], Y_TOP, "Same workers,\nmore output", LIGHT_BLUE, implies="productivity and wages up")
+    box(ax, X[1], Y_TOP, "AI assists workers", LIGHT_BLUE, note="share 1 − ψ",
+        implies="worker keeps the task,\ndoes it faster")
+    box(ax, X[2], Y_TOP, "Same workers,\nmore output", LIGHT_BLUE,
+        note="by the gain per task", implies="productivity and wages up")
 
     # Bottom branch: replacing.
-    box(ax, X[1], Y_BOT, "AI replaces workers", EC_BLUE, note="share ψ", implies="fewer cognitive jobs")
+    box(ax, X[1], Y_BOT, "AI replaces workers", EC_BLUE, note="share ψ",
+        implies="task gets automated,\nfewer cognitive jobs")
     box(ax, X[2], Y_BOT, "Displaced workers\nlook for new jobs", EC_BLUE,
         note="new tasks absorb some (ρ)", implies="unemployment up during search")
 
