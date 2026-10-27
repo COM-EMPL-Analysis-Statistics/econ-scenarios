@@ -131,6 +131,20 @@ Labour Market in 2030 (relative to no-AI)
 - These parameters are uncertain and open for debate
   - automation share, new tasks and the adoption path are judgement calls
 
+## Comparison with the JRC's EDGE simulation
+
+| | Our scenarios | JRC EDGE-EUROMOD |
+|----------------------------------|-----------------------------------------------------------------------------------|-----------------------------------------------------------------------------------|
+| **Similar** | | |
+| Scenarios | modest / substantial / high impact by 2030 | low / medium / high impact by 2035 |
+| **Different** | | |
+| Assumptions | what AI can do + how much it is used | *outcomes* like TFP, wages, unemployment |
+| Results | GDP + labour market impact | distributional effects of given shock |
+| Dynamics | better AI → more use → jobs adjust | same AI → 3.6×\* use → 3.6× effects |
+| Labour market | job search, switching, sticky wages | none: effects imposed directly |
+| Coverage | EU aggregate, two occupation groups | DE, ES, PL, SE; age and gender |
+| | | [\* growth in AI use that takes the most exposed occupations to full adoption]{.footnote} |
+
 ## Thank you {.end}
 
 **© European Union 2026**

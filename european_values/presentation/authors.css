@@ -29,3 +29,9 @@
 /* EU values below / above the US value: light red / light green cell (html only; pptx ignores spans). */
 .reveal table td:has(> .lower)  { background-color: #f8d7da !important; }
 .reveal table td:has(> .higher) { background-color: #d4edda !important; }
+
+/* Footnote under a table. */
+.reveal .footnote {
+  font-size: 0.8em;
+  color: #595959;
+}
