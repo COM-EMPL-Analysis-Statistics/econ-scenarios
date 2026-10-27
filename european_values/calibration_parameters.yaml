@@ -598,13 +598,13 @@ parameters:
     eu:
       key_difference: true
       treatment: recalibrate
-      value: {modest: 1.0, substantial: 0.50, extreme: 0.25}
+      value: {modest: 0.75, substantial: 0.50, extreme: 0.25}
       source: >
         In Acemoglu and Restrepo (2019) the share of displaced tasks that gets reinstated = 1 for 1947-87 and 0.5 for 1987-2017. The same decomposition on European data (EU KLEMS) for 2000-2014 yields about 1 (Labaj and Vitalos, 2019).
         Source: https://nhf.euba.sk/www_write/files/katedry/khp/working-papers/dep_wp021.pdf
       justification: >
         Antropic uses the recent US ratio as its upper bound, whereas we are more cautious:
-          - modest: the historical ratio (= no net displacement)
+          - modest: halfway between the historical ratio (1 = no net displacement) and the recent US ratio
           - substantial: the recent US ratio
           - extreme: the 'substantial' value of Antropic
           - this matters: Antropic's values yield clearly lower wages and higher unemployment
@@ -664,7 +664,7 @@ parameters:
     eu:
       key_difference: true
       treatment: recalibrate
-      value: 0.6
+      value: 0.7
       source: >
         Wages in Europe change every +- 15 months on average and relative pay is fixed in collective agreements covering about 60% of workers. In the US wages change faster, every +- 12 months, and only 12% of workers are covered by collective agreements.
 
@@ -673,7 +673,7 @@ parameters:
         This captures the persistence of cognitive wages above their market-clearing level. Wages change less often in Europe, so the value should be higher than in the US.
           - if a wage is reset once every T months, the share of a gap still left after a year is (1 - 1/T)^12
           - this yields 0.35 at 12 months and 0.44 at 15 months; scaling Antropic's 0.5 by 0.44/0.35 yields 0.6
-          - likely a lower bound because collective agreements add additional drag, so could also check 0.7
+          - that is a lower bound because collective agreements add additional drag, so we take 0.7 (0.6 as a variant)
           - this parameter matters: a stickier cognitive wage protects cognitive pay but raises cognitive unemployment
       status: discuss
 

@@ -1,0 +1,7 @@
+# Quarto project root for the slide deck in presentation/.
+# Its only job is to make `quarto preview` serve this whole folder, so the deck's figures in
+# output/figures/ load in the live preview. Rendering is unchanged: outputs stay beside the qmd.
+project:
+  type: default
+  render:
+    - presentation/eu_ai_scenarios.qmd

@@ -1,0 +1,11 @@
+/* Tables: smaller text so each row stays on one line; the pptx has its own sizing. */
+.reveal table {
+  font-size: 0.75em;
+}
+
+/* Title slide: one author per line, each on its own yellow bar, with a gap between them. */
+.reveal .quarto-title-author {
+  display: block !important;
+  width: fit-content;
+  margin-bottom: 0.5em !important;
+}

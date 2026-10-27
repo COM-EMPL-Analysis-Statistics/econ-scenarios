@@ -438,9 +438,9 @@ footer { color:var(--muted); font-size:12px; margin-top:18px; }
 <td class="meaning">share of the displaced work that comes back as new tasks for workers</td>
 <td class="num">0.5 / 0.25 / 0<span class="mse">modest / substantial / extreme</span></td>
 <td class="src"><p>scenario assumptions: Acemoglu and Restrepo (2019) estimated rho = 0.5</p></td>
-<td class="num euval">1 / 0.5 / 0.25<span class="mse">modest / substantial / extreme</span><br><span class="treat recalibrate">recalibrate</span></td>
+<td class="num euval">0.75 / 0.5 / 0.25<span class="mse">modest / substantial / extreme</span><br><span class="treat recalibrate">recalibrate</span></td>
 <td class="src"><p>In Acemoglu and Restrepo (2019) the share of displaced tasks that gets reinstated = 1 for 1947-87 and 0.5 for 1987-2017. The same decomposition on European data (EU KLEMS) for 2000-2014 yields about 1 (Labaj and Vitalos, 2019). Source: <a href="https://nhf.euba.sk/www_write/files/katedry/khp/working-papers/dep_wp021.pdf" target="_blank" rel="noopener">https://nhf.euba.sk/www_write/files/katedry/khp/working-papers/dep_wp021.pdf</a></p></td>
-<td class="just"><p>Antropic uses the recent US ratio as its upper bound, whereas we are more cautious:</p><ul><li>modest: the historical ratio (= no net displacement)</li><li>substantial: the recent US ratio</li><li>extreme: the &#x27;substantial&#x27; value of Antropic</li><li>this matters: Antropic&#x27;s values yield clearly lower wages and higher unemployment</li></ul></td>
+<td class="just"><p>Antropic uses the recent US ratio as its upper bound, whereas we are more cautious:</p><ul><li>modest: halfway between the historical ratio (1 = no net displacement) and the recent US ratio</li><li>substantial: the recent US ratio</li><li>extreme: the &#x27;substantial&#x27; value of Antropic</li><li>this matters: Antropic&#x27;s values yield clearly lower wages and higher unemployment</li></ul></td>
 <td><span class="pill discuss">discuss</span></td>
 </tr>
 <tr class="decided" data-status="decided" data-key="0" data-todo="0">
@@ -468,9 +468,9 @@ footer { color:var(--muted); font-size:12px; margin-top:18px; }
 <td class="meaning">stickiness of the cognitive wage (how much of its excess over the market-clearing level is still there after a year: 0.5 = half; higher = stickier)</td>
 <td class="num">0.5</td>
 <td class="src"><p>wage-setting evidence (Section 3.4)</p></td>
-<td class="num euval">0.6<br><span class="treat recalibrate">recalibrate</span></td>
+<td class="num euval">0.7<br><span class="treat recalibrate">recalibrate</span></td>
 <td class="src"><p>Wages in Europe change every +- 15 months on average and relative pay is fixed in collective agreements covering about 60% of workers. In the US wages change faster, every +- 12 months, and only 12% of workers are covered by collective agreements.</p><p>Sources: Druant et al. (2009), Barattieri et al. (2014), OECD/AIAS ICTWSS database, <a href="https://www.oecd.org/en/data/datasets/ecdaias-ictwss-database.html" target="_blank" rel="noopener">https://www.oecd.org/en/data/datasets/ecdaias-ictwss-database.html</a></p></td>
-<td class="just"><p>This captures the persistence of cognitive wages above their market-clearing level. Wages change less often in Europe, so the value should be higher than in the US.</p><ul><li>if a wage is reset once every T months, the share of a gap still left after a year is (1 - 1/T)^12</li><li>this yields 0.35 at 12 months and 0.44 at 15 months; scaling Antropic&#x27;s 0.5 by 0.44/0.35 yields 0.6</li><li>likely a lower bound because collective agreements add additional drag, so could also check 0.7</li><li>this parameter matters: a stickier cognitive wage protects cognitive pay but raises cognitive unemployment</li></ul></td>
+<td class="just"><p>This captures the persistence of cognitive wages above their market-clearing level. Wages change less often in Europe, so the value should be higher than in the US.</p><ul><li>if a wage is reset once every T months, the share of a gap still left after a year is (1 - 1/T)^12</li><li>this yields 0.35 at 12 months and 0.44 at 15 months; scaling Antropic&#x27;s 0.5 by 0.44/0.35 yields 0.6</li><li>that is a lower bound because collective agreements add additional drag, so we take 0.7 (0.6 as a variant)</li><li>this parameter matters: a stickier cognitive wage protects cognitive pay but raises cognitive unemployment</li></ul></td>
 <td><span class="pill discuss">discuss</span></td>
 </tr>
 </tbody></table></div><div class="empty">No rows match the current filter.</div></details>

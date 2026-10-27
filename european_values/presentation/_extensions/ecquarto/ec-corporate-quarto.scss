@@ -1,0 +1,356 @@
+/*-- scss:defaults --*/
+
+// European Commission Corporate Theme for Quarto Reveal.js
+// Based on EC Visual Identity 2024
+
+// Core colors
+$ec-blue: #003399;
+$ec-blue-dark: #000083;
+$ec-mint: #C6E5DF;
+$ec-white: #FFFFFF;
+$ec-black: #000000;
+
+// Accent colors
+$ec-green: #44BA7E;
+$ec-purple: #48038C;
+$ec-orange: #FF712C;
+$ec-yellow: #FFD34E;
+$ec-pink: #DD0C86;
+
+// Text colors
+$ec-text-dark: #404040;
+$ec-text-light: #FFFFFF;
+
+// Reveal.js theme variables
+$font-family-sans-serif: 'Arial', 'Helvetica Neue', Helvetica, sans-serif;
+$presentation-font-size-root: 32px;
+$presentation-heading-font: $font-family-sans-serif;
+$presentation-heading-color: $ec-blue;
+$body-color: $ec-text-dark;
+$link-color: $ec-blue;
+$background-color: $ec-white;
+
+// Heading sizes
+$presentation-h1-font-size: 1.8em;
+$presentation-h2-font-size: 1.4em;
+$presentation-h3-font-size: 1.1em;
+
+/*-- scss:rules --*/
+
+// ==========================================
+// BASE SLIDE STYLES
+// ==========================================
+
+.reveal .slides section {
+  text-align: left;
+  padding: 60px;
+}
+
+// EC emblem and CC BY logo use data-background-image on each slide in QMD
+// Headers
+.reveal h1 {
+  color: $ec-blue;
+  font-weight: bold;
+  margin-bottom: 0.5em;
+}
+
+.reveal h2 {
+  color: $ec-blue;
+  font-weight: bold;
+  margin-bottom: 0.4em;
+}
+
+.reveal h3 {
+  color: $ec-blue-dark;
+  font-weight: bold;
+}
+
+// Body text
+.reveal p, .reveal li {
+  font-size: 0.85em;
+  line-height: 1.5;
+  color: $ec-text-dark;
+}
+
+// Links
+.reveal a {
+  color: $ec-blue;
+  text-decoration: underline;
+}
+
+// Lists
+.reveal ul, .reveal ol {
+  margin-left: 1em;
+}
+
+.reveal li {
+  margin-bottom: 0.3em;
+}
+
+// Tables
+.reveal table {
+  border-collapse: collapse;
+  margin: 1em 0;
+}
+
+.reveal th {
+  background-color: $ec-blue;
+  color: $ec-white;
+  padding: 0.5em 1em;
+  text-align: left;
+}
+
+.reveal td {
+  border: 1px solid #ddd;
+  padding: 0.5em 1em;
+}
+
+.reveal tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+// Code blocks
+.reveal code {
+  background-color: #f4f4f4;
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+
+.reveal pre {
+  background-color: #f4f4f4;
+  padding: 1em;
+  border-radius: 5px;
+  border-left: 4px solid $ec-blue;
+}
+
+// Blockquotes
+.reveal blockquote {
+  border-left: 4px solid $ec-yellow;
+  padding-left: 1em;
+  margin-left: 0;
+  font-style: italic;
+  color: #666;
+  background: none;
+}
+
+// ==========================================
+// TITLE SLIDE
+// ==========================================
+
+// Title slide container
+.reveal .slides section#title-slide {
+  text-align: left !important;
+  padding: 180px 80px 80px 30px !important;
+
+  // Title heading
+  h1.title {
+    color: $ec-white !important;
+    font-size: 2.5em;
+    font-weight: normal;
+    margin: 0 0 20px 0 !important;
+    padding: 0 !important;
+    text-transform: none;
+    text-shadow: none;
+    text-align: left !important;
+    width: 100% !important;
+  }
+
+  // Subtitle directly below title
+  p.subtitle {
+    color: $ec-white !important;
+    font-size: 1.1em;
+    font-weight: normal;
+    margin: 0 0 40px 0 !important;
+    padding: 0 !important;
+    opacity: 1;
+    text-align: left !important;
+  }
+
+  // Yellow author bar
+  .quarto-title-authors {
+    margin: 0 !important;
+    padding: 0 !important;
+    display: block;
+    text-align: left !important;
+  }
+
+  .quarto-title-author {
+    background-color: $ec-yellow;
+    padding: 10px 20px;
+    margin: 0;
+    display: inline-block;
+  }
+
+  .quarto-title-author-name {
+    color: $ec-blue !important;
+    font-size: 0.8em;
+    font-style: italic;
+  }
+
+  // Hide other metadata (date, etc)
+  .quarto-title-meta {
+    display: none;
+  }
+}
+
+// ==========================================
+// SECTION DIVIDER SLIDE
+// ==========================================
+
+// Background gradient is set via data-background-gradient in QMD
+.reveal .slides section.section {
+  text-align: left !important;
+  padding: 400px 80px 60px 80px !important;  // Top padding pushes text into white area (55% of 700px = 385px)
+
+  h2 {
+    color: $ec-blue !important;
+    font-weight: normal;
+    font-size: 2.2em;
+    margin: 0 0 10px 0;
+  }
+
+  p {
+    color: $ec-blue !important;
+    font-size: 1em;
+    margin: 0;
+  }
+}
+
+// ==========================================
+// END/THANK YOU SLIDE
+// ==========================================
+
+// Background color and images are set via data-background-* attributes in QMD
+.reveal .slides section.end {
+  text-align: left !important;
+  padding: 250px 80px 60px 80px !important;
+
+  h2 {
+    color: $ec-blue !important;
+    font-size: 3em;
+    font-weight: normal;
+    margin-bottom: 0.2em;
+  }
+
+  .cc-by-logo {
+    width: 120px;
+    height: auto;
+    margin: 0 0 1.5em 0;
+  }
+
+  p {
+    color: $ec-blue;
+    font-size: 0.55em;
+    line-height: 1.4;
+    margin-top: 0.5em;
+    max-width: 80%;
+  }
+
+  a {
+    color: $ec-blue;
+  }
+}
+
+// ==========================================
+// SLIDE NUMBERS
+// ==========================================
+
+.reveal .slide-number {
+  bottom: 30px;
+  left: 40px;
+  right: auto;
+  font-size: 0.7em;
+  color: $ec-text-dark;
+  background: none;
+
+  a {
+    text-decoration: none;
+    color: $ec-text-dark;
+  }
+}
+
+// Hide slide number when title slide is active
+.reveal .slide-number-a {
+  // Will be controlled via JS or specific selectors
+}
+
+// Title, section, and end slides should not show slide numbers - using has selector
+.reveal:has(section.quarto-title-block.present) .slide-number,
+.reveal:has(#title-slide.present) .slide-number,
+.reveal:has(section.section.present) .slide-number,
+.reveal:has(section.end.present) .slide-number {
+  display: none !important;
+}
+
+
+// ==========================================
+// UTILITY CLASSES
+// ==========================================
+
+// Two-column layout
+.reveal .columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+}
+
+// Accent color classes
+.green { color: $ec-green; }
+.purple { color: $ec-purple; }
+.orange { color: $ec-orange; }
+.yellow { color: $ec-yellow; }
+.pink { color: $ec-pink; }
+.blue { color: $ec-blue; }
+
+// Background accent classes
+.bg-green { background-color: $ec-green; color: white; padding: 0.2em 0.5em; }
+.bg-purple { background-color: $ec-purple; color: white; padding: 0.2em 0.5em; }
+.bg-orange { background-color: $ec-orange; color: white; padding: 0.2em 0.5em; }
+.bg-yellow { background-color: $ec-yellow; color: $ec-blue; padding: 0.2em 0.5em; }
+.bg-pink { background-color: $ec-pink; color: white; padding: 0.2em 0.5em; }
+.bg-blue { background-color: $ec-blue; color: white; padding: 0.2em 0.5em; }
+
+// Authors div for custom positioning
+.authors {
+  background-color: $ec-yellow;
+  color: $ec-blue;
+  padding: 8px 16px;
+  font-size: 0.75em;
+  font-style: italic;
+  display: inline-block;
+}
+
+// ==========================================
+// PRINT/PDF OVERRIDES
+// ==========================================
+// When exporting via ?print-pdf, reveal.js adds .print-pdf to <html>
+
+html.print-pdf {
+  // Regular slides - restore padding
+  .reveal .slides section {
+    padding: 40px 60px !important;
+  }
+
+  // Title slide
+  .reveal .slides section#title-slide {
+    padding: 120px 60px 60px 30px !important;
+  }
+
+  // Section divider - fixed px padding for print (% calculates differently)
+  .reveal .slides section.section {
+    padding: 400px 60px 40px 60px !important;
+  }
+
+  // End slide - position content lower
+  .reveal .slides section.end {
+    padding: 200px 60px 40px 60px !important;
+  }
+}
+
+@media print {
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}

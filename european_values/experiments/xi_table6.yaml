@@ -1,7 +1,7 @@
 # Antropic's Table 6: the annual rigidity of the cognitive wage, on the EU baseline.
-# xi is on 'discuss' in calibration_parameters.yaml; 0.5 is Antropic, 0.6 the EU baseline, 0.7 the variant to check.
+# xi is on 'discuss' in calibration_parameters.yaml; 0.5 is Antropic, 0.7 the EU baseline, 0.6 the frequency-only variant.
 name: xi table 6
-description: cognitive wage rigidity at 0, 0.5 (Antropic), 0.6 (EU baseline), 0.7, 0.8 and 0.9
+description: cognitive wage rigidity at 0, 0.5 (Antropic), 0.6 (frequency only), 0.7 (EU baseline), 0.8 and 0.9
 base: eu
 sweep:
   xi: [0, 0.5, 0.6, 0.7, 0.8, 0.9]

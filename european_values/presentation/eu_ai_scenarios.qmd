@@ -1,0 +1,116 @@
+---
+title: "Economic scenarios for transformative AI"
+author:
+  - "Andrea Blasco, DG JRC"
+  - "Thimo De Schouwer, DG EMPL"
+format:
+  ecquarto-revealjs:
+    css: authors.css
+  ecquarto-pptx: default
+---
+
+## Introduction
+
+- Wide ranging views on how AI will impact the labor market
+  - from limited effects on wages, productivity, and employment
+  - to a large-scale transformation
+- Antropic built a model that turns a few assumptions into measurable outcomes
+  - in particular: paths for GDP / wages / unemployment by 2030
+- We build on their model in two ways:
+  - set the parameters to reflect our labor market
+  - adjust the assumptions on what AI can *already* (and *will*) do
+
+## Model {.section}
+
+## What the model does
+
+![](model_diagram.png){fig-align="center" width="100%"}
+
+
+## Scenarios {.section}
+
+## What each scenario sets for 2030
+
++----------------------+--------------------------------------------------------------+
+| **Capability**       | share of work AI can do (replacing or assisting)             |
++----------------------+--------------------------------------------------------------+
+| **Adoption**         | share of that actually done with AI                          |
++----------------------+--------------------------------------------------------------+
+| **Automation**       | share where AI replaces workers                              |
++----------------------+--------------------------------------------------------------+
+| **New tasks**        | share of displaced work returning as new tasks               |
++----------------------+--------------------------------------------------------------+
+| **Gain per task**    | how much faster AI does a task                               |
++----------------------+--------------------------------------------------------------+
+| *Today*              | *Same in all scenarios:*                                     |
+|                      |                                                              |
+|                      | • *AI can do 14% of all work (EU: 12%)*                      |
+|                      |                                                              |
+|                      | • *of that work, 10% is actually done with AI (EU: 6%)*      |
++----------------------+--------------------------------------------------------------+
+
+## Scenario Assumptions
+
+| | US | EU | why |
+|-----|-----|-----|-----------|
+| capability 2030 | 20 / 30 / 50% | 18 / 28 / 48% | occupation mix |
+| adoption 2030 | 20 / 40 / 60% | 12 / 24 / 36% | lower start carried forward |
+| automation | 50 / 75 / 90% | 25 / 50 / 75% | usage share is an upper bound |
+| new tasks | 50 / 25 / 0% | 75 / 50 / 25% | EU evidence |
+| gain per task | 35 / 42 / 57% | same | property of the tool |
+
+## The European economy
+
+| | US | EU |
+|---|---|---|
+| unemployment | 3.8% | 4.6% |
+| monthly job-finding rate | 22% | 10% |
+| annual quits | 11% | 6% |
+| wage stickiness | 0.5 | 0.7 |
+
+## Results {.section}
+Labour Market in 2030 (relative to no-AI)
+
+## Comparing Results
+
+- **US Economy**: the paper as published
+- [EU Economy w. US Scenarios]{.orange}: European labour market w. US Scenarios
+- [EU Economy w. EMPL Scenarios]{.blue}: European labour market w. our scenarios
+
+## GDP
+
+![](../output/figures/gdp.png){fig-align="center" width="100%"}
+
+## Cognitive wage
+
+![](../output/figures/wage_C.png){fig-align="center" width="100%"}
+
+## Unemployment
+
+![](../output/figures/unemployment.png){fig-align="center" width="100%"}
+
+## Cognitive employment
+
+![](../output/figures/employment_C.png){fig-align="center" width="100%"}
+
+## Labour share
+
+![](../output/figures/labor_share.png){fig-align="center" width="100%"}
+
+## Takeaways
+
+- Same scenarios in European labour market: **similar gains, more unemployment**
+  - stickier wages + slower hiring turn wage cuts into job losses
+- Different European scenarios: **smaller gains, smaller disruption**
+  - more new tasks and less automation protect cognitive workers
+  - most of the gap is adoption: Europe starts lower and does not catch up
+- Adoption as an important lever
+  - ongoing work on why adoption differs so much across countries
+- These parameters are uncertain and open for debate
+  - automation share, new tasks and the adoption path are judgement calls
+
+## Thank you {.end}
+
+**© European Union 2026**
+
+Unless otherwise noted the reuse of this presentation is authorised under the [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) license. For any use or reproduction of elements that are not owned by the EU, permission may need to be sought directly from the respective right holders.

@@ -1,0 +1,34 @@
+id,symbol,section,side,us_value,eu_value,in_us_on_eu
+sigma,σ,A,economy,0.5,0.5,EU
+s_L,"s_L,t0",A,economy,0.6,0.63,EU
+share_C,"s_C,t0 / s_L,t0",A,economy,0.624,0.6134,EU
+eps,ε,A,economy,3,3,EU
+r_bar,r̄,A,economy,0.115,0.11,EU
+delta,δ,A,economy,0.05,0.055,EU
+t0,t0,A,economy,2024.0,2024.0,EU
+t_anchor,,A,economy,2026.5,2026.5,EU
+t_read,,A,economy,2030.0,2030.0,EU
+months_per_year,h,A,economy,12,12,EU
+lam,λ,A,economy,1,1,EU
+one_minus_phi,1 − ϕ,A,economy,3.1,3.1,EU
+g_A,g_A,A,economy,0.01,0.008,EU
+n,n,A,economy,0.0033,0.001,EU
+m_anchor,m_t,B,economy,0.14,0.12,EU
+m_2030,m_2030,B,scenario,0.2/0.3/0.5,0.18/0.28/0.48,US
+d_anchor,d_t,B,economy,0.1,0.06,EU
+d_2030,d_2030,B,scenario,0.2/0.4/0.6,0.12/0.24/0.36,US
+d_ceiling,d̄,B,economy,1,1,EU
+a_anchor,a_t,B,scenario,0.3/0.35/0.45,0.3/0.35/0.45,US
+g_a,g_a,B,scenario,0/0.028/0.1,0/0.028/0.1,US
+psi,ψ_t,C,scenario,0.5/0.75/0.9,0.25/0.5/0.75,US
+rho,ρ,C,scenario,0.5/0.25/0,0.75/0.5/0.25,US
+mu,μ,C,scenario,0.17/0.08/0.04,0.17/0.08/0.04,US
+theta_H,θ_H,C,scenario,0.1/0.25/0.5,0.1/0.25/0.5,US
+xi,ξ,C,economy,0.5,0.7,EU
+q_bar_annual,q̄,D,economy,0.11,0.057,EU
+q_T_share,q^T_o / q̄_o,D,economy,0.55,0.55,EU
+sep_rel,q̄_C / q̄; q̄_N / q̄,D,economy,0.69/1.52,0.734/1.423,EU
+U_bar,Ū,D,economy,0.038,0.046,EU
+mu_bar,μ̄,D,economy,0.17,0.17,EU
+iota,ι,D,economy,1.27,1.27,EU
+pi_bar_mean,π̄_o,D,economy,0.65,0.45,EU
