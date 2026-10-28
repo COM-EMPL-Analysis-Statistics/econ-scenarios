@@ -40,7 +40,7 @@ SETS = {
     "eu": "EU Economy w. EMPL Scenarios",
 }
 # EC corporate colours: the benchmark in grey, the hybrid in EC orange, the EU in EC blue.
-COLORS = {"us": "#8C8C8C", "us_on_eu": "#FF712C", "eu": "#003399"}
+COLORS = {"us": "#8C8C8C", "us_on_eu": "#6F9BE0", "eu": "#003399"}
 
 # outcome: (title, y label, value at 'no AI'; None leaves the point out)
 PANELS = {
@@ -52,6 +52,7 @@ PANELS = {
     "net_return": ("Net return to capital", "% / yr", None),
     "labor_share": ("Labor share", "pp vs no-AI", 0.0),
     "employment_C": ("Cognitive employment", "% since mid-2026", None),
+    "employment_N": ("Other employment", "% since mid-2026", None),
     "unemployment_C": ("Cognitive unemployment", "%", None),
     "unemployment": ("Unemployment", "%", None),
 }
@@ -65,7 +66,7 @@ X_LABELS = ["no AI", *SCENARIO_NAMES]
 # share gap is nil once measured as a change. Scenario gap: adoption 2030 leads for GDP,
 # unemployment and employment, new tasks for the cognitive wage. None skips that arrow.
 DRIVERS = {
-    "gdp": ("stickier wages,\nslower hiring", "lower\nadoption"),
+    "gdp": ("stickier wages,\nslower hiring", "lower adoption,\nless automation"),
     "unemployment": ("stickier wages,\nslower hiring", "lower adoption,\nmore new tasks"),
     "wage_C": ("stickier\nwages", "more new tasks,\nless automation"),
     "employment_C": ("stickier\nwages", "lower adoption,\nmore new tasks"),
@@ -187,8 +188,7 @@ def figure(outcome: str, rows: list[dict[str, object]], out: Path) -> None:
         spine.set_color("#bfbfbf")
     ax.grid(True, axis="y", color="#e6e6e6", linewidth=0.8)
     ax.set_axisbelow(True)
-    if no_ai is not None:
-        ax.axhline(0, color="#404040", linestyle="--", linewidth=1)
+    ax.axhline(0, color="#404040", linestyle="--", linewidth=1)
 
     # Change panels start from a 'no AI' point at zero; level panels show the three scenarios only.
     labels = X_LABELS if no_ai is not None else X_LABELS[1:]
@@ -218,25 +218,31 @@ def figure(outcome: str, rows: list[dict[str, object]], out: Path) -> None:
     # Driver arrows: at the extreme point, to the right of the value labels, one per gap.
     right = len(labels) - 0.6
     if outcome in DRIVERS:
-        x = xs[-1] + 0.28
+        x = xs[-1] + 0.22
         ends = [series[n][-1] for n in ("us", "us_on_eu", "eu")]
-        # The two spans share the orange point. When it lies between the other two they stack on
-        # one vertical; when it is the outer point they overlap, so the second arrow moves right.
-        nested = not min(ends[0], ends[2]) <= ends[1] <= max(ends[0], ends[2])
-        for k, ((lo, hi), text) in enumerate(zip(zip(ends, ends[1:]), DRIVERS[outcome])):
+        # The two spans share the light-blue point. When it lies between the other two they stack
+        # on one vertical; when it is the outer point they overlap, so the second arrow sits just
+        # right of the first, both labels go right of both arrows, and the second label moves to
+        # the part of its span the first one does not cover.
+        spans = [tuple(sorted(p)) for p in zip(ends, ends[1:])]
+        nested = (not min(ends[0], ends[2]) <= ends[1] <= max(ends[0], ends[2])
+                  and None not in DRIVERS[outcome])
+        step = 0.14 if nested else 0.0
+        for k, ((lo, hi), text) in enumerate(zip(spans, DRIVERS[outcome])):
             if text is None:
                 continue
-            if k == 1 and nested and DRIVERS[outcome][0] is not None:
-                x += 0.6
-                right += 0.6
-            ax.annotate("", (x, max(lo, hi)), (x, min(lo, hi)), zorder=4,
+            ymid = (lo + hi) / 2
+            if k == 1 and nested:
+                (a, b) = spans[0]
+                ymid = (b + hi) / 2 if hi > b else (lo + a) / 2
+            ax.annotate("", (x + k * step, hi), (x + k * step, lo), zorder=4,
                         arrowprops={"arrowstyle": "<->", "color": "#404040", "linewidth": 1.4,
                                     "shrinkA": 2, "shrinkB": 2})
-            ax.text(x + 0.05, (lo + hi) / 2, text, ha="left", va="center", fontsize=9,
+            ax.text(x + step + 0.05, ymid, text, ha="left", va="center", fontsize=9,
                     style="italic", color="#404040", linespacing=1.1, zorder=4,
                     bbox={"boxstyle": "round,pad=0.15", "facecolor": "white", "edgecolor": "none",
                           "alpha": 0.9})
-        right += 0.55
+        right += 0.45 + step
 
     ax.set_xticks(xs, labels, fontsize=12)
     ax.set_xlim(-0.4, right)

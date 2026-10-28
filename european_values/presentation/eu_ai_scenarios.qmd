@@ -89,47 +89,52 @@ Labour Market in 2030 (relative to no-AI)
 
 ## Comparing Results
 
-- **US Economy**: the paper as published
-- [EU Economy w. US Scenarios]{.orange}: European labour market w. US Scenarios
-- [EU Economy w. EMPL Scenarios]{.blue}: European labour market w. our scenarios
+| | | |
+|----------------------------------------------------------|------------------------------------------------------------|------------------------------------------|
+| **Three sets of results** | **Economy** | **Scenarios** |
+| [US Economy]{.grey} | US | Korinek Paper |
+| [EU Economy w. US Scenarios]{.lightblue} | EU | Korinek Paper |
+| [EU Economy w. EMPL Scenarios]{.blue} | EU | EMPL |
+| **What if** | | |
+| [EU Economy w. US Adoption]{.blue} | EU | EMPL but US adoption |
+| **Outcomes in 2030 (vs. no AI)** | | |
+| Overall | GDP, unemployment, labour share | |
+| Cognitive workers | wage, employment | |
 
 ## GDP
 
 ![](../output/figures/gdp.png){fig-align="center" width="100%"}
 
-## Cognitive wage
-
-![](../output/figures/wage_C.png){fig-align="center" width="100%"}
-
 ## Unemployment
 
 ![](../output/figures/unemployment.png){fig-align="center" width="100%"}
-
-## Cognitive employment
-
-![](../output/figures/employment_C.png){fig-align="center" width="100%"}
 
 ## Labour share
 
 ![](../output/figures/labor_share.png){fig-align="center" width="100%"}
 
+## Cognitive wage
+
+![](../output/figures/wage_C.png){fig-align="center" width="100%"}
+
+## Cognitive employment
+
+![](../output/figures/employment_C.png){fig-align="center" width="100%"}
+
 ## What if Europe caught up on adoption?
 
 ![](../output/figures/convergence.png){fig-align="center" width="100%"}
 
-## Takeaways
+## Takeaways {.tight}
 
-- Same scenarios in European labour market: **similar gains, more unemployment**
-  - stickier wages + slower hiring turn wage cuts into job losses
-- Different European scenarios: **smaller gains, smaller disruption**
-  - more new tasks and less automation protect cognitive workers
-  - most of the gap is adoption: Europe starts lower and does not catch up
-- Adoption as an important lever
-  - catching up with US adoption by 2030: gains up by two thirds, cognitive wages still rise
-  - but in the extreme scenario unemployment then approaches the US level
-  - ongoing work on why adoption differs so much across countries
-- These parameters are uncertain and open for debate
-  - automation share, new tasks and the adoption path are judgement calls
+| | | | | |
+|-------------------------------|------------|--------------|--------------|-----------------------------|
+| **Each set vs the one above** | **GDP** | **Unemployment** | **Cognitive wages** | **Why** |
+| [US Economy]{.grey} | | | | |
+| [EU Economy w. US Scenarios]{.lightblue} | similar | higher | fall less | stickier wages, slower hiring |
+| [EU Economy w. EMPL Scenarios]{.blue} | lower | lower | rise | lower adoption, less automation |
+| [EU Economy w. US Adoption]{.blue} | higher, < US | higher, ≈ US | rise more | faster adoption |
+| [ongoing work: why adoption differs]{.footnote} | | | | |
 
 ## Comparison with the JRC's EDGE simulation
 
@@ -141,12 +146,35 @@ Labour Market in 2030 (relative to no-AI)
 | Assumptions | what AI can do + how much it is used | *outcomes* like TFP, wages, unemployment |
 | Results | GDP + labour market impact | distributional effects of given shock |
 | Dynamics | better AI → more use → jobs adjust | same AI → 3.6×\* use → 3.6× effects |
-| Labour market | job search, switching, sticky wages | none: effects imposed directly |
+| Mechanisms | sticky wages, job search, switching / re-education | none: effects imposed, not explained |
 | Coverage | EU aggregate, two occupation groups | DE, ES, PL, SE; age and gender |
-| | | [\* growth in AI use that takes the most exposed occupations to full adoption]{.footnote} |
+| | | [\* growth to full AI use in most exposed jobs]{.footnote} |
 
 ## Thank you {.end}
 
 **© European Union 2026**
 
 Unless otherwise noted the reuse of this presentation is authorised under the [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) license. For any use or reproduction of elements that are not owned by the EU, permission may need to be sought directly from the respective right holders.
+
+## Appendix {.section}
+
+## Why adoption starts lower in Europe {.dense}
+
+| | US | EU | EU / US |
+|----------------------------------------------------------------|------------|------------|------------|
+| **People, any purpose, 2025** | | | |
+| monthly LLM users, millions, total (A) | 61 | [133]{.higher} | 2.2 |
+| **Workers, 2026** | | | |
+| use genAI for work (B) | 43% | [30%]{.lower} | 0.69 |
+| share of work hours with genAI (B) | 5.2% | [1.7%]{.lower} | 0.33 |
+| **Firms, 2025** | | | |
+| use AI, any purpose (C) | 34% | [20%]{.lower} | 0.59 |
+| deploy genAI (D) | 36% | [37%]{.higher} | 1.03 |
+| of AI users: in more than two activities (D) | 81% | [55%]{.lower} | 0.68 |
+| **Our model, today** | | | |
+| share of AI-doable work done with AI (E) | 10% | [6%]{.lower} | 0.6 |
+| [(A) Prosus/Dealroom, Europe (B) Bick et al. 2026, EU-5 (C) Eurostat; US Census (D) EIB survey (E) AIM-WORK; Korinek et al.]{.footnote} | | | |
+
+## Other workers gain in every scenario
+
+![](../output/figures/other_workers.png){fig-align="center" width="100%"}

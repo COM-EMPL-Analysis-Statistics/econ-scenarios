@@ -33,14 +33,14 @@ EXPERIMENT = HERE.parent / "experiments" / "d_2030_convergence.yaml"
 SETS = {
     "us": "US Economy",
     "eu": "EU Economy w. EMPL Scenarios",
-    "eu_converge": "EU Economy, US adoption by 2030",
+    "eu_converge": "EU Economy w. US Adoption",
 }
 STYLE = {
     "us": {"color": COLORS["us"], "linestyle": "-"},
     "eu": {"color": COLORS["eu"], "linestyle": "-"},
     "eu_converge": {"color": COLORS["eu"], "linestyle": (0, (4, 2))},
 }
-OUTCOMES = ("gdp", "wage_C", "unemployment", "employment_C")
+OUTCOMES = ("gdp", "unemployment", "wage_C", "employment_C")
 
 
 def results() -> list[dict[str, object]]:
@@ -63,15 +63,14 @@ def figure(rows: list[dict[str, object]], out: Path) -> None:
     fig.patch.set_facecolor("white")
     xs = list(range(len(SCENARIO_NAMES)))
     for ax, outcome in zip(axes, OUTCOMES):
-        title, ylabel, no_ai = PANELS[outcome]
+        title, ylabel, _ = PANELS[outcome]
         ax.set_facecolor("white")
         for side, spine in ax.spines.items():
             spine.set_visible(side == "bottom")
             spine.set_color("#bfbfbf")
         ax.grid(True, axis="y", color="#e6e6e6", linewidth=0.8)
         ax.set_axisbelow(True)
-        if no_ai is not None:
-            ax.axhline(0, color="#404040", linestyle="--", linewidth=1)
+        ax.axhline(0, color="#404040", linestyle="--", linewidth=1)
 
         series: dict[str, list[float]] = {}
         for name, label in SETS.items():
@@ -100,8 +99,11 @@ def figure(rows: list[dict[str, object]], out: Path) -> None:
 
     handles, labels = axes[0].get_legend_handles_labels()
     fig.legend(handles, labels, frameon=False, fontsize=11, loc="lower center", ncol=3,
-               bbox_to_anchor=(0.5, -0.02), handlelength=4, columnspacing=2.5)
-    fig.tight_layout(rect=(0, 0.08, 1, 1))
+               bbox_to_anchor=(0.5, 0.03), handlelength=4, columnspacing=2.5)
+    fig.text(0.5, 0.01, "EU w. US Adoption: our scenarios for capability, automation and new tasks; "
+             "only adoption in 2030 raised to the paper's 20 / 40 / 60%", ha="center", va="bottom",
+             fontsize=10, color="#7f7f7f", style="italic")
+    fig.tight_layout(rect=(0, 0.13, 1, 1))
     fig.savefig(out, facecolor="white")
     plt.close(fig)
 

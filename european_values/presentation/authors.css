@@ -32,6 +32,14 @@
 
 /* Footnote under a table. */
 .reveal .footnote {
-  font-size: 0.8em;
+  font-size: 0.7em;
   color: #595959;
 }
+
+/* Grey series name, matching the "US Economy" line in the figures. */
+.reveal .grey { color: #8C8C8C; }
+.reveal .lightblue { color: #6F9BE0; }
+
+/* Slides with a long table: slightly smaller text. */
+.reveal .dense table { font-size: 0.66em; }
+.reveal .tight table { font-size: 0.58em; }
