@@ -42,7 +42,8 @@ SETS = {
 # EC corporate colours: the benchmark in grey, the hybrid in EC orange, the EU in EC blue.
 COLORS = {"us": "#8C8C8C", "us_on_eu": "#6F9BE0", "eu": "#003399"}
 
-# outcome: (title, y label, value at 'no AI'; None leaves the point out)
+# outcome: (title, y label, value at 'no AI'; None leaves the point out, "U_bar" takes each
+# set's own base-period unemployment rate)
 PANELS = {
     "gdp": ("GDP", "% vs no-AI", 0.0),
     "wage_avg": ("Average wage", "% vs no-AI", 0.0),
@@ -54,7 +55,7 @@ PANELS = {
     "employment_C": ("Cognitive employment", "% since mid-2026", None),
     "employment_N": ("Other employment", "% since mid-2026", None),
     "unemployment_C": ("Cognitive unemployment", "%", None),
-    "unemployment": ("Unemployment", "%", None),
+    "unemployment": ("Unemployment", "%", "U_bar"),
 }
 X_LABELS = ["no AI", *SCENARIO_NAMES]
 
@@ -91,6 +92,7 @@ def results() -> list[dict[str, object]]:
             # Labour share against the no-AI path, on which it stays at its base-period value.
             rd["labor_share_level"] = rd["labor_share"]
             rd["labor_share"] = rd["labor_share"] - 100.0 * cal.s_L
+            rd["unemployment_no_ai"] = 100.0 * cal.U_bar
             rows.append({"set": name, "set_label": SETS[name], "scenario": s, **rd})
     return rows
 
@@ -196,7 +198,9 @@ def figure(outcome: str, rows: list[dict[str, object]], out: Path) -> None:
     series: dict[str, list[float]] = {}
     for name, label in SETS.items():
         ys = [r[outcome] for r in rows if r["set"] == name]
-        if no_ai is not None:
+        if no_ai == "U_bar":
+            ys = [next(r["unemployment_no_ai"] for r in rows if r["set"] == name), *ys]
+        elif no_ai is not None:
             ys = [no_ai, *ys]
         series[name] = ys
         ax.plot(xs, ys, color=COLORS[name], linewidth=2.5, marker="o", markersize=9,
@@ -207,7 +211,7 @@ def figure(outcome: str, rows: list[dict[str, object]], out: Path) -> None:
     # label when the points coincide and round to the same number.
     span = max(max(v) for v in series.values()) - min(min(v) for v in series.values()) or 1.0
     for i, x in enumerate(xs):
-        if no_ai is not None and i == 0:
+        if i == 0 and no_ai is not None and no_ai != "U_bar":
             continue
         for name, y, text, xytext, ha, va in _label_positions({n: v[i] for n, v in series.items()}, span):
             ax.annotate(text, (x, y), textcoords="offset points", xytext=xytext, ha=ha, va=va,
@@ -229,6 +233,7 @@ def figure(outcome: str, rows: list[dict[str, object]], out: Path) -> None:
                   and None not in DRIVERS[outcome])
         step = 0.14 if nested else 0.0
         for k, ((lo, hi), text) in enumerate(zip(spans, DRIVERS[outcome])):
+            color = COLORS[("us_on_eu", "eu")[k]]
             if text is None:
                 continue
             ymid = (lo + hi) / 2
@@ -236,10 +241,10 @@ def figure(outcome: str, rows: list[dict[str, object]], out: Path) -> None:
                 (a, b) = spans[0]
                 ymid = (b + hi) / 2 if hi > b else (lo + a) / 2
             ax.annotate("", (x + k * step, hi), (x + k * step, lo), zorder=4,
-                        arrowprops={"arrowstyle": "<->", "color": "#404040", "linewidth": 1.4,
+                        arrowprops={"arrowstyle": "<->", "color": color, "linewidth": 1.4,
                                     "shrinkA": 2, "shrinkB": 2})
             ax.text(x + step + 0.05, ymid, text, ha="left", va="center", fontsize=9,
-                    style="italic", color="#404040", linespacing=1.1, zorder=4,
+                    style="italic", color=color, linespacing=1.1, zorder=4,
                     bbox={"boxstyle": "round,pad=0.15", "facecolor": "white", "edgecolor": "none",
                           "alpha": 0.9})
         right += 0.45 + step
